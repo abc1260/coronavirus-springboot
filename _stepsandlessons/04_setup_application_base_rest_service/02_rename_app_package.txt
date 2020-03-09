@@ -1,0 +1,54 @@
+Rename The Application Package
+--------------------------------------------------------------------------------
+Change root package from:
+    com.aikiinc.springbootstarter
+To:
+    com.aikiinc.coronavirus
+
+
+
+Rename Root SpringBoot Application
+--------------------------------------------------------------------------------
+From: src/main/java/com/aikiinc/coronavirus/DemoApplication.java
+To: src/main/java/com/aikiinc/coronavirus/CoronaVirusApp.java
+
+
+
+Rename HelloController.java To CornaVirusController.java
+--------------------------------------------------------------------------------
+Rename: src/main/java/com/aikiinc/coronavirus/HelloController.java
+To: src/main/java/com/aikiinc/coronavirus/CornaVirusController.java
+
+File is now:
+package com.aikiinc.coronavirus;
+
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+@RestController
+public class CornaVirusController {
+
+	@RequestMapping("/")
+	public String index() {
+		return "Greetings from Spring Boot!";
+	}
+
+}
+
+
+* Explained
+-----------------
+In the directory src/com/aikiinc/springbootstarter, create a file:
+HelloController.java
+
+Define the class as a spring rest controller:
+    @RestController
+
+
+Define the endpoint for the rest service as the root path: /
+	@RequestMapping("/")
+
+If we access the endpoint, return the message:
+    Greetings from Spring Boot!
+
+
