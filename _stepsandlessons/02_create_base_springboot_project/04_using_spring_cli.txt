@@ -1,0 +1,119 @@
+Create A Project Using Springboot CLI
+--------------------------------------------------------------------------------
+spring init --build=maven --java-version=1.8 --dependencies=web --packaging=jar --groupId=com.aikiinc --artifactId=springboot-starter --version=0.0.1-RELEASE springboot-cli-app-02.zip
+
+* Explained
+------------------
+spring init: Use spring cli to initialize a project
+--build=maven: Use maven to build our project
+--java-version=1.8: Use java version 1.8
+--dependencies=web: Create a springboot spring-boot-starter-web
+--packaging=jar: The project will be packaged as a jar
+--groupId=com.aikiinc: Maven group id for the target project
+--artifactId=springboot-starter: Maven artifactId for the target project
+--version=0.0.1-RELEASE: Maven version for the target project
+springboot-cli-app-02.zip: The file name for the create springboot project
+
+
+
+View The Generate Project Files
+--------------------------------------------------------------------------------
+mvnw
+mvnw.cmd
+pom.xml
+/src/main/java/com/aikiinc/springbootstarter/DemoApplication.java
+/src/main/resources/application.properties
+/src/main/resources/static
+/src/main/resources/templates
+/src/test/java/com/aikiinc/springbootstarter/DemoApplicationTest.java
+/target
+
+
+* Explained
+------------------
+This is the basic setup for a springboot maven project
+
+
+
+View Project pom.xml
+--------------------------------------------------------------------------------
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 https://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<parent>
+		<groupId>org.springframework.boot</groupId>
+		<artifactId>spring-boot-starter-parent</artifactId>
+		<version>2.2.5.RELEASE</version>
+		<relativePath/> <!-- lookup parent from repository -->
+	</parent>
+	<groupId>com.aikiinc</groupId>
+	<artifactId>springboot-starter</artifactId>
+	<version>0.0.1-RELEASE</version>
+	<name>demo</name>
+	<description>Demo project for Spring Boot</description>
+
+	<properties>
+		<java.version>1.8</java.version>
+	</properties>
+
+	<dependencies>
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-web</artifactId>
+		</dependency>
+
+		<dependency>
+			<groupId>org.springframework.boot</groupId>
+			<artifactId>spring-boot-starter-test</artifactId>
+			<scope>test</scope>
+			<exclusions>
+				<exclusion>
+					<groupId>org.junit.vintage</groupId>
+					<artifactId>junit-vintage-engine</artifactId>
+				</exclusion>
+			</exclusions>
+		</dependency>
+	</dependencies>
+
+	<build>
+		<plugins>
+			<plugin>
+				<groupId>org.springframework.boot</groupId>
+				<artifactId>spring-boot-maven-plugin</artifactId>
+			</plugin>
+		</plugins>
+	</build>
+
+</project>
+
+
+* Explained
+------------------
+We see the spring-boot-starter-web dependency:
+    <dependency>
+	    <groupId>org.springframework.boot</groupId>
+	    <artifactId>spring-boot-starter-web</artifactId>
+    </dependency>
+
+
+Run the Project
+--------------------------------------------------------------------------------
+cd springboot-cli-app-02
+
+mvn spring-boot:run
+
+Open browser to:
+http://localhost:8080/
+
+
+* Explained
+--------------------
+We see an error page since there is no service or template page.
+The code compiled and did not generate any error.
+
+What we have is a starter project for springboot.
+
+
+
+

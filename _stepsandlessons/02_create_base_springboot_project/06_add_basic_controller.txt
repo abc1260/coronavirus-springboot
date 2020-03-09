@@ -1,0 +1,53 @@
+Add A Basic Controller
+File: src/com/aikiinc/springbootstarter
+--------------------------------------------------------------------------------
+package com.aikiinc.springbootstarter;
+
+import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.RequestMapping;
+
+@RestController
+public class HelloController {
+
+	@RequestMapping("/")
+	public String index() {
+		return "Greetings from Spring Boot!";
+	}
+
+}
+
+
+* Explained
+-----------------
+In the directory src/com/aikiinc/springbootstarter, create a file:
+HelloController.java
+
+Define the class as a spring rest controller:
+    @RestController
+
+
+Define the endpoint for the rest service as the root path: /
+	@RequestMapping("/")
+
+If we access the endpoint, return the message:
+    Greetings from Spring Boot!
+
+
+
+Run The Springboot Application
+--------------------------------------------------------------------------------
+cd springboot-cli-app-02
+
+mvn spring-boot:run
+
+Open browser to:
+http://localhost:8080/
+
+
+* Explained
+--------------------
+We see the message in the browser as:
+    Greetings from Spring Boot!
+
+
+
