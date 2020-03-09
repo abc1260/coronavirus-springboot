@@ -1,0 +1,142 @@
+Rename Existing Test Package
+File: src/test/
+--------------------------------------------------------------------------------
+Rename package:  com.aikiinc.springbootstarter
+To: com.aikiinc.coronavirus
+
+
+Rename Application Generated Test
+File: src/test/java/com/aikiinc/coronavirus/CornaVirusControllerTest.java
+--------------------------------------------------------------------------------
+Rename:  DemoApplicationTests.java
+to: CornaVirusControllerTest.java
+
+Current code is:
+	package com.aikiinc.coronavirus;
+
+	import org.junit.jupiter.api.Test;
+	import org.springframework.boot.test.context.SpringBootTest;
+
+	@SpringBootTest
+	class CornaVirusControllerTest {
+
+		@Test
+		void contextLoads() {
+		}
+
+	}
+
+
+
+Mock The Application Test
+--------------------------------------------------------------------------------
+Change the code to this:
+
+package com.aikiinc.coronavirus;
+
+import org.junit.jupiter.api.Test;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
+
+@SpringBootTest
+@AutoConfigureMockMvc
+class CornaVirusControllerTest {
+
+	@Autowired
+	private MockMvc mvc;
+
+	@Test
+	void contextLoads() {
+	}
+
+}
+
+Add the auto configuration of test, add this annotation at top of class:
+	@AutoConfigureMockMv
+
+Automatically configure MockMvc. Add as data member to class:
+	@Autowired
+	private MockMvc mvc;
+
+
+
+Call Root Endpoint "/" As A Mock Test
+File: src/test/java/com/aikiinc/coronavirus/CornaVirusControllerTest.java
+--------------------------------------------------------------------------------
+Current test is defined as this:
+	class CornaVirusControllerTest {
+
+		@Test
+		void contextLoads() {
+		}
+
+Change it to:
+	@Test
+	public void getHello() throws Exception {
+		mvc.perform(MockMvcRequestBuilders.get("/").accept(MediaType.APPLICATION_JSON))
+				.andExpect(status().isOk())
+				.andExpect(content().string(equalTo("{\"message\":\"Greetings from Spring Boot!\"}")));
+	}
+
+
+* Explained
+----------------
+Perform the mocked test:
+	mvc.perform(..);
+
+Use HTTP GET method to access endpoint:
+	MockMvcRequestBuilders.get("/")
+
+The request will use JSON mime type: application/json
+	accept(MediaType.APPLICATION_JSON))
+
+Validate That the reponse is ok - http 200 returned
+		.andExpect(status().isOk())
+
+Get the reponsce content and see that it contains the desire json repsonse string: 
+"{\"message\":\"Greetings from Spring Boot!\"}"
+		.andExpect(content().string(equalTo("{\"message\":\"Greetings from Spring Boot!\"}")));
+
+
+
+Running Mock Test In Eclipse
+File: src/test/java/com/aikiinc/coronavirus/CornaVirusControllerTest.java
+--------------------------------------------------------------------------------
+In eclise Right->getHello()->Run As->Junit Test
+
+We should see the Junit famous "Green Color"!
+
+
+
+Running Mock Test On Command Line Using Maven
+--------------------------------------------------------------------------------
+cd coronavirus_springboot_restservice
+
+mvn test -Dtest=CornaVirusControllerTest#getHello
+
+We see part of message:
+	[INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 3.107 s - in com.aikiinc.coronavirus.CornaVirusControllerTest
+	[INFO] 
+	[INFO] ------------------------------------------------------------------------
+	[INFO] BUILD SUCCESS
+	[INFO] ------------------------------------------------------------------------
+
+
+* Explained
+-------------------
+Run a single test using maven:
+	mvn test -Dtest=CornaVirusControllerTest#getHello
+
+	Call a single test: -Dtest=CornaVirusControllerTest#getHello
+
+Run the CornaVirusControllerTest test:
+	in com.aikiinc.coronavirus.CornaVirusControllerTest
+
+Successful run of test:
+	INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, 
+
+	We ran 1 test
+
+
