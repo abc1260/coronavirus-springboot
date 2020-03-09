@@ -1,3 +1,8 @@
+Go To Prior Maven Project
+--------------------------------------------------------------------------------
+cd coronavirus_springboot_restservice
+
+
 Add A Basic Controller
 File: src/com/aikiinc/springbootstarter
 --------------------------------------------------------------------------------
@@ -36,8 +41,6 @@ If we access the endpoint, return the message:
 
 Run The Springboot Application
 --------------------------------------------------------------------------------
-cd springboot-cli-app-02
-
 mvn spring-boot:run
 
 Open browser to:

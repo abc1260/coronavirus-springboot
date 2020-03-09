@@ -15,9 +15,17 @@ spring init: Use spring cli to initialize a project
 springboot-cli-app-02.zip: The file name for the create springboot project
 
 
+Extract Zip File To A Directory
+--------------------------------------------------------------------------------
+Extract zip to direcotry called: coronavirus_springboot_restservice.
+This will be our maven project directory.
+
+
 
 View The Generate Project Files
 --------------------------------------------------------------------------------
+cd coronavirus_springboot_restservice
+
 mvnw
 mvnw.cmd
 pom.xml
@@ -99,7 +107,9 @@ We see the spring-boot-starter-web dependency:
 
 Run the Project
 --------------------------------------------------------------------------------
-cd springboot-cli-app-02
+cd coronavirus_springboot_restservice
+
+mvn clean install
 
 mvn spring-boot:run
 
