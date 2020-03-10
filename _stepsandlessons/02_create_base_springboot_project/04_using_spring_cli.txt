@@ -75,12 +75,6 @@ View Project pom.xml
 			<groupId>org.springframework.boot</groupId>
 			<artifactId>spring-boot-starter-test</artifactId>
 			<scope>test</scope>
-			<exclusions>
-				<exclusion>
-					<groupId>org.junit.vintage</groupId>
-					<artifactId>junit-vintage-engine</artifactId>
-				</exclusion>
-			</exclusions>
 		</dependency>
 	</dependencies>
 
@@ -125,5 +119,11 @@ The code compiled and did not generate any error.
 What we have is a starter project for springboot.
 
 
-
+Change pom.xml Project Information
+--------------------------------------------------------------------------------
+<groupId>com.aikiinc</groupId>
+<artifactId>coronavirus_data</artifactId>
+<version>0.0.1-SNAPSHOT</version>
+<name>coronavirus_data</name>
+<description>Corona Virus Data Access</description>
 

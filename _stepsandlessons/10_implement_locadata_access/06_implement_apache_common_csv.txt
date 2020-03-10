@@ -1,0 +1,92 @@
+Reading CVS data using Apache Commons CSV
+-------------------------------------------------------------------------------
+Its a great implementation and method for reading CVS data:
+https://commons.apache.org/proper/commons-csv/user-guide.html
+
+
+Add this depency to the pom.xml:
+	<dependency>
+		<groupId>org.apache.commons</groupId>
+		<artifactId>commons-csv</artifactId>
+		<version>1.8</version>
+	</dependency>
+
+
+Create method to read CVSData: readLocaData()
+	Optional<Iterable<CSVRecord>> readLocaData() {
+		log.info("Read local data from: " + localUrl);
+		Optional<Iterable<CSVRecord>> records = Optional.empty();
+		
+		return records;
+	}
+
+
+* Explained
+----------------
+Return a non null Iterable object of CSVRecord.
+	Optional<Iterable<CSVRecord>>
+
+Initialize an empty value or null:
+	Optional<Iterable<CSVRecord>> records = Optional.empty();
+
+
+Setup Test for Reading Apache Commons CSV
+-------------------------------------------------------------------------------
+public class CoronaVirusLocalDataTest {
+
+	@Test
+	public void readLocaData() {
+		Optional<Iterable<CSVRecord>> records = new CoronaVirusLocalData().readLocaData();
+		if (records.isPresent()) {
+			Assert.assertTrue(records.get().iterator().hasNext());	
+				
+		//try {
+		//		records.get().forEach(e -> System.out.println(e));
+		//} catch (Exception e) {
+		//}
+		} else
+			Assert.fail("No CSVRecord was read");
+	}
+
+}
+
+* Explained
+----------------
+Read the local data:
+	Optional<Iterable<CSVRecord>> records = new CoronaVirusLocalData().readLocaData();
+
+If records are present - this avoids the null value error
+	if (records.isPresent()) {
+
+Assert that we read entries:
+	Assert.assertTrue(records.get().iterator().hasNext());
+
+Read all the data using Java 8 steream and print the result of each entry:	
+	records.get().forEach(e -> System.out.println(e));		
+
+If there are not entries show that test failed:
+	Assert.fail("No CSVRecord was read");
+
+
+Run Test In Eclipse
+--------------------------------------------------------------------------------
+In eclise Right->readLocaData()->Run As->Junit Test
+
+We should see the Junit famous "Red Color"!
+It failed, we will fix this issue soon.
+
+
+
+Run CoronaVirusLocalDataTest.java Test
+--------------------------------------------------------------------------------
+cd coronavirus_springboot_restservice
+
+mvn test -Dtest=CoronaVirusLocalDataTest#readLocaData
+
+We see part of message:
+	[INFO] Tests run: 1, Failures: 1, Errors: 0, Skipped: 0, Time elapsed: 3.107 s - in com.aikiinc.coronavirus.CornaVirusControllerTest
+	[INFO] 
+	[INFO] ------------------------------------------------------------------------
+	[INFO] BUILD SUCCESS
+	[INFO] ------------------------------------------------------------------------
+

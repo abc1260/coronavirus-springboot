@@ -1,0 +1,57 @@
+Keep A Copy of The Remote Data Locally
+-------------------------------------------------------------------------------
+Of course the internet works all the time, it really does. Except that Internet 
+Service Provider may not. That is why we are keeping a local copy in the 
+application resource directory: src/main/resources/coronavirus.data.
+
+
+Read The Local Data
+File: src/main/com/aikiinc/coronavirus/data/CoronaVirusLocalData.java
+-------------------------------------------------------------------------------
+Create a class called CoronaVirusLocalData.java
+
+* Here is the beginning code:
+package com.aikiinc.coronavirus.data;
+
+public class CoronaVirusLocalData {
+
+}
+
+
+Test Reading The Local Data
+File: src/test/com/aikiinc/coronavirus/data/CoronaVirusLocalDataTest.java
+-------------------------------------------------------------------------------
+I do follow test driven development. I test all my code to see and validate what
+I am doing.
+
+* Here is the beginning code:
+import org.junit.jupiter.api.Test;
+
+public class CoronaVirusLocalDataTest {
+
+	@Test
+	public void test() {
+		fail("Not yet implemented");
+	}
+
+}
+
+
+Add Reading The Local Data From Resources
+File: src/main/com/aikiinc/coronavirus/data/CoronaVirusLocalData.java
+-------------------------------------------------------------------------------
+public class CoronaVirusLocalData {
+	private static final String CORONAVIRUS_DATA = "coronavirus.data";
+	private Logger log = LoggerFactory.getLogger(CoronaVirusLocalData.class);
+	private URL localUrl = CoronaVirusLocalData.class.getClassLoader().getResource(CORONAVIRUS_DATA);
+
+}
+
+* Explained
+---------------
+Create Simple Logging Facade for Java (SLF4j):
+	private Logger log = LoggerFactory.getLogger(CoronaVirusLocalData.class);
+Set file name as a constant:
+	private static final String CORONAVIRUS_DATA = "coronavirus.data";
+Get access to the src/main/resource which when compiled goest to target/classes/coronavirus.data
+	private URL localUrl = CoronaVirusLocalData.class.getClassLoader().getResource(CORONAVIRUS_DATA);
