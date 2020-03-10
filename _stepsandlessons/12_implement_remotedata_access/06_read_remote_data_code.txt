@@ -1,0 +1,178 @@
+Implement Reading Remote Data
+File: src/main/com/aikiinc/coronavirus/data/CoronaVirusRemoteData.java
+-------------------------------------------------------------------------------
+Add this method to the CoronaVirusRemoteData.java:
+
+Optional<Iterable<CSVRecord>> readRemoteData() throws CoronaVirusDataException {
+	log.info("Read remote data from:  " + siteUrl);
+	Optional<Iterable<CSVRecord>> records = Optional.empty();
+
+	BufferedReader br = null;
+	try {
+		br = new BufferedReader(new InputStreamReader(siteUrl.openStream()));
+
+		// Get the iterable records
+		Iterable<CSVRecord> trecords = CSVFormat.DEFAULT.withFirstRecordAsHeader().withIgnoreEmptyLines().parse(br);
+		records = Optional.of(trecords);
+	} catch (IOException e) {
+		log.warn("Remote data was NOT read from: " + siteUrl);
+		throw new CoronaVirusDataException(e);
+	} finally {
+		try {
+			if (br != null)
+				br.close();
+		} catch (IOException e) {
+		}
+	}
+
+	return records;
+}
+
+
+* Explained
+-------------------
+Return a non null Iterable object of CSVRecord.
+	Optional<Iterable<CSVRecord>>
+
+Initialize a non empty iterable:
+	Optional<Iterable<CSVRecord>> records = Optional.empty();
+
+Read the data from the local file (src/resources/coronavirus.data) as an input stream:
+	new InputStreamReader(localUrl.openStream())
+
+Buffer reading the data:
+		br = new BufferedReader(new InputStreamReader(siteUrl.openStream()));
+
+Use the Reading Apache Commons CSV - CSVFormat to read first record as Header:
+	CSVFormat.DEFAULT.withFirstRecordAsHeader()
+
+Ignore Empty Lines:	
+		.withIgnoreEmptyLines()
+		
+Use the BufferedReader to stream data:
+		.parse(br);
+
+Return an Optional value for the read CSV records:		
+		records = Optional.of(trecords);
+
+Do the norma exception handling:
+	} catch (IOException e) {
+		log.warn("Remote data was NOT read from: " + siteUrl);
+		throw new Exception(e);
+	} finally {
+		try {
+			if (br != null)
+				br.close();
+		} catch (IOException e) {
+		}
+	}
+
+Finally return the read records	
+	return records;
+
+
+
+Reimplement CoronaVirusLocalDataTest.java readLocaData()
+--------------------------------------------------------------------------------
+Here is the new code implementation:
+
+@Test
+public void readRemoteData() {
+	try {
+		coronaVirusRemoteData.process();
+		
+		Optional<Iterable<CSVRecord>> records = coronaVirusRemoteData.readRemoteData();
+		if (records.isPresent()) {
+			Assert.assertTrue(records.get().iterator().hasNext());
+			
+//				try {
+//					records.get().forEach(e -> System.out.println(e));
+//				} catch (Exception e) {
+//				}
+		} else
+			Assert.fail("No CSVRecord was read");
+	} catch (CoronaVirusDataException e) {
+		Assert.fail(e.getMessage());
+	}
+}
+
+* Explained
+----------------
+Set up the remote connection Urls:
+	coronaVirusRemoteData.process();
+	
+Read the local data:
+	Optional<Iterable<CSVRecord>> records = coronaVirusRemoteData.readRemoteData();
+
+If records are present - this avoids the null value error
+	if (records.isPresent()) {
+
+Assert that we read entries:
+	Assert.assertTrue(records.get().iterator().hasNext());
+
+Read all the data using Java 8 stream and print the result of each entry:	
+//				try {
+//					records.get().forEach(e -> System.out.println(e));
+//				} catch (Exception e) {
+//				}
+
+If there are not entries show that test failed:
+	Assert.fail("No CSVRecord was read");
+
+If error show failed message:
+	} catch (CoronaVirusDataException e) {
+		Assert.fail(e.getMessage());
+	}
+
+
+
+Rerun CoronaVirusLocalDataTest.java
+--------------------------------------------------------------------------------
+Run a single test using maven:
+	mvn test -Dtest=CoronaVirusLocalDataTest#readRemoteData
+
+	Call a single test: -Dtest=CoronaVirusLocalDataTest#readRemoteData
+	
+Successful run of test:
+	https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_daily_reports/
+	Load coronavirus data for date: 03-09-2020
+	Loading data from: https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_daily_reports/03-09-2020.csv
+	Read remote data from:  https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_daily_reports/03-09-2020.csv
+
+	INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, 
+
+	We ran 1 test and it succeeded.
+
+
+
+Show Data When running  CoronaVirusRemoteDataTest.java
+--------------------------------------------------------------------------------
+As I develop I like to show real data access. Uncomment and to see data:
+	try {
+			records.get().forEach(e -> System.out.println(e));
+	} catch (Exception e) {
+	}
+
+Rerun test and see read data as:
+	CSVRecord [comment='null', recordNumber=1, values=[Hubei, Mainland China, 2020-03-09T14:33:03, 67743, 3008, 46488, 30.9756, 112.2707]]
+	CSVRecord [comment='null', recordNumber=2, values=[, Italy, 2020-03-09T18:13:11, 9172, 463, 724, 43.0000, 12.0000]]
+	CSVRecord [comment='null', recordNumber=3, values=[, South Korea, 2020-03-09T09:03:03, 7478, 53, 118, 36.0000, 128.0000]]
+	CSVRecord [comment='null', recordNumber=4, values=[, Iran, 2020-03-09T10:53:03, 7161, 237, 2394, 32.0000, 53.0000]]
+	CSVRecord [comment='null', recordNumber=5, values=[Guangdong, Mainland China, 2020-03-09T01:43:01, 1352, 8, 1260, 23.3417, 113.4244]]
+	CSVRecord [comment='null', recordNumber=6, values=[Henan, Mainland China, 2020-03-08T05:03:02, 1272, 22, 1247, 33.8820, 113.6140]]
+	.
+	.
+
+
+Make sure Entire SpringBoot Applications Is Still Running
+--------------------------------------------------------------------------------
+cd  coronavirus_springboot_restservice
+
+Type on command line either:
+mvnw spring-boot:run
+or
+mnw spring-boot:run
+
+We should still see in the browser:
+    {"message":"Greetings from Spring Boot!"}
+
