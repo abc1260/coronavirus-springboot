@@ -1,0 +1,139 @@
+Create Class For Remote Data Access
+File: src/main/com/aikiinc/coronavirus/data/CoronaVirusRemoteData.java
+-------------------------------------------------------------------------------
+Create a class called CoronaVirusRemoteData.java
+
+* Here is the beginning code:
+package com.aikiinc.coronavirus.data;
+
+public class CoronaVirusRemoteData {
+
+}
+
+
+Create Test Class For Remote Data Access
+File: src/test/com/aikiinc/coronavirus/data/CoronaVirusRemoteDataTest.java
+-------------------------------------------------------------------------------
+I do follow test driven development. I test all my code to see and validate what
+I am doing.
+
+* Here is the beginning code:
+import org.junit.Test;
+
+public class CoronaVirusRemoteDataTest {
+
+	@Test
+	public void test() {
+		fail("Not yet implemented");
+	}
+
+}
+
+
+Add Reading The Remote Data From Resources
+File: src/main/com/aikiinc/coronavirus/data/CoronaVirusRemoteData.java
+-------------------------------------------------------------------------------
+public class CoronaVirusRemoteData {
+	private Logger log = LoggerFactory.getLogger(CoronaVirusRemoteData.class);
+	public final static String SOURCE_URL_PREFIX = "https://github.com/CSSEGISandData/COVID-19/tree/master/csse_covid_19_data/csse_covid_19_daily_reports/";
+
+}
+
+* Explained
+---------------
+Create Simple Logging Facade for Java (SLF4j):
+	private Logger log = LoggerFactory.getLogger(CoronaVirusRemoteData.class);
+
+Get access to the remote data via this url prefix:
+    https://github.com/CSSEGISandData/COVID-19/tree/master/csse_covid_19_data/csse_covid_19_daily_reports/
+    If you go to this site, you will daily entries posted by JHU. Examle: 03-07-2020.csv.
+    The data are posted 1 day from today. If today is 03/08/2020 than the 03-07-2020.csv will be available.
+
+
+
+Validate that We Can Load and Read the Remote Data
+-------------------------------------------------------------------------------
+Here is the current code:
+
+public class CoronaVirusRemoteData {
+	private Logger log = LoggerFactory.getLogger(CoronaVirusRemoteData.class);
+	public final static String SOURCE_URL_PREFIX = "https://github.com/CSSEGISandData/COVID-19/tree/master/csse_covid_19_data/csse_covid_19_daily_reports/";
+	private String sourceUrlPrefix;
+	private URL siteUrl;
+	private String dateLoaded;
+
+	public CoronaVirusRemoteData(String sourceUrlPrefix) throws CoronaVirusDataException {
+		this.sourceUrlPrefix = sourceUrlPrefix;
+
+		log.debug(this.sourceUrlPrefix);
+	}
+
+	public void process() throws CoronaVirusDataException {
+		try {
+			setRemoteConnection();
+		} catch (CoronaVirusDataException e) {
+		}
+	}
+
+	void setRemoteConnection() throws CoronaVirusDataException {
+		String sdate = LocalDate.now().format(DateTimeFormatter.ofPattern("MM-dd-yyyy"));
+		//String sdate = LocalDate.now().minusDays(1).format(DateTimeFormatter.ofPattern("MM-dd-yyyy"));
+		log.debug("Load coronavirus data for date: " + sdate);
+
+		String sourceUrl = SOURCE_URL_PREFIX + sdate + ".csv";
+		try {
+			siteUrl = new URL(sourceUrl);
+
+			siteUrl.getContent();
+			
+			this.dateLoaded = sdate;
+
+			log.debug("\tLoading data from: " + siteUrl);
+		} catch (Exception e) {
+			log.warn("\tCould not load data from: " + sourceUrl);
+			log.warn("\tException: " + e.getMessage());
+		}
+	}
+
+}
+
+
+* Explained
+---------------
+Capture the remote source URL prefix:
+	private String sourceUrlPrefix;
+
+Create a Http access to the remote URL:
+	private URL siteUrl;
+
+Capture the date we processed reading the data:
+	private String dateLoaded;
+
+
+Pass into the contructor the source url preffix:
+    public CoronaVirusRemoteData(String sourceUrlPrefix) throws CoronaVirusDataException {
+		this.sourceUrlPrefix = sourceUrlPrefix;
+		log.debug(this.sourceUrlPrefix);
+	}
+
+Process access to the remote data, call the setRemoteConnection():
+	public void process() throws CoronaVirusDataException {
+		try {
+			setRemoteConnection();
+		} catch (CoronaVirusDataException e) {
+		}
+	}
+
+Remote connections method setRemoteConnection() implementation:
+    Get the current data as MM-dd-yyyy format:
+        String sdate = LocalDate.now().format(DateTimeFormatter.ofPattern("MM-dd-yyyy"));
+    Create the remote url with targeted date:
+        String sourceUrl = SOURCE_URL_PREFIX + sdate + ".csv";
+    Store the site URL object:
+        siteUrl = new URL(sourceUrl);siteUrl = new URL(sourceUrl);
+    Check if we can read the remote file. Pre check to throw an exception:
+		siteUrl.getContent();
+	Capture the current date being processed:		
+			this.dateLoaded = sdate;
+
+

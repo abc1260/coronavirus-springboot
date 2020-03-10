@@ -104,7 +104,7 @@ Get the reponsce content and see that it contains the desire json repsonse strin
 Running Mock Test In Eclipse
 File: src/test/java/com/aikiinc/coronavirus/CornaVirusControllerTest.java
 --------------------------------------------------------------------------------
-In eclise Right->getHello()->Run As->Junit Test
+In eclise Right click->getHello()->Run As->Junit Test
 
 We should see the Junit famous "Green Color"!
 

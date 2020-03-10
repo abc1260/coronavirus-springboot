@@ -1,0 +1,86 @@
+Create Test Class For Remote Data Access
+File: src/test/com/aikiinc/coronavirus/data/CoronaVirusRemoteDataTest.java
+-------------------------------------------------------------------------------
+public class CoronaVirusRemoteDataTest {
+	private static Logger LOG = LoggerFactory.getLogger(CoronaVirusRemoteDataTest.class);
+	private static CoronaVirusRemoteData coronaVirusRemoteData;
+
+	@BeforeClass
+	public static void setUp() {
+		try {
+			coronaVirusRemoteData = new CoronaVirusRemoteData(CoronaVirusRemoteData.SOURCE_URL_PREFIX);
+		} catch (Exception e) {
+			e.printStackTrace();
+			Assert.fail(e.getMessage());
+		}
+	}
+
+	@Test
+	public void process() {
+		try {
+			coronaVirusRemoteData.process();
+		} catch (Exception e) {
+			e.printStackTrace();
+			Assert.fail(e.getMessage());
+		}
+	}
+
+}
+
+
+* Explained
+-----------------------
+Initialize the test by creating the CoronaVirusRemoteData object via setUp():
+	try {
+		coronaVirusRemoteData = new CoronaVirusRemoteData(CoronaVirusRemoteData.SOURCE_URL_PREFIX);
+	} catch (Exception e) {
+		e.printStackTrace();
+		Assert.fail(e.getMessage());
+	}
+
+Call the remote data processing via process():
+	try {
+		coronaVirusRemoteData.process();
+	} catch (Exception e) {
+		e.printStackTrace();
+		Assert.fail(e.getMessage());
+	}
+
+
+Run The Initial Test In Eclipse
+--------------------------------------------------------------------------------
+In eclise Right click->process()->Run As->Junit Test
+
+We see it fails
+    Load coronavirus data for date: 03-10-2020
+    Could not load data from: https://github.com/CSSEGISandData/COVID-19/tree/master/csse_covid_19_data/csse_covid_19_daily_reports/03-10-2020.csv
+    Exception: https://github.com/CSSEGISandData/COVID-19/tree/master/csse_covid_19_data/csse_covid_19_daily_reports/03-10-2020.csv
+
+    The test failed, since we are reading current day file 03-10-2020.csv. Data is stored for
+    the prior day: 03-09-2020.csv
+
+
+Move reading Remote File For Prior Day
+--------------------------------------------------------------------------------
+Uncommenting CoronaVirusRemoteData.java code:
+	void setRemoteConnection() throws CoronaVirusDataException {
+	    String sdate = LocalDate.now().minusDays(1).format(DateTimeFormatter.ofPattern("MM-dd-yyyy"));
+	    log.debug("Load coronavirus data for date: " + sdate);
+
+    Note:
+        minusDays(1) moves current day back one day.
+        This is what we will use from here on.
+
+Run The Initial Test In Eclipse
+--------------------------------------------------------------------------------
+In eclise Right click->process()->Run As->Junit Test
+
+We see it succeded:
+    https://github.com/CSSEGISandData/COVID-19/tree/master/csse_covid_19_data/csse_covid_19_daily_reports/
+    Load coronavirus data for date: 03-09-2020
+    Loading data from: https://github.com/CSSEGISandData/COVID-19/tree/master/csse_covid_19_data/csse_covid_19_daily_reports/03-09-2020.csv
+
+    We read remote file 03-09-2020.csv, since for me today is 03/10/2020.
+
+
+

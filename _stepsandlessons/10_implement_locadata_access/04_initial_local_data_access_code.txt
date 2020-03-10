@@ -5,7 +5,7 @@ Service Provider may not. That is why we are keeping a local copy in the
 application resource directory: src/main/resources/coronavirus.data.
 
 
-Read The Local Data
+Create Class For Local Data Access
 File: src/main/com/aikiinc/coronavirus/data/CoronaVirusLocalData.java
 -------------------------------------------------------------------------------
 Create a class called CoronaVirusLocalData.java
@@ -18,14 +18,14 @@ public class CoronaVirusLocalData {
 }
 
 
-Test Reading The Local Data
+Create Test Class For Local Data Access
 File: src/test/com/aikiinc/coronavirus/data/CoronaVirusLocalDataTest.java
 -------------------------------------------------------------------------------
 I do follow test driven development. I test all my code to see and validate what
 I am doing.
 
 * Here is the beginning code:
-import org.junit.jupiter.api.Test;
+import org.junit.Test;
 
 public class CoronaVirusLocalDataTest {
 
