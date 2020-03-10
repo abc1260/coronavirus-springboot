@@ -2,23 +2,11 @@ package com.aikiinc.coronavirus.data;
 
 import java.io.BufferedReader;
 import java.io.IOException;
+
+import com.aikiinc.coronavirus.data.CoronaVirusDataException;
 import java.io.InputStreamReader;
 import java.net.URL;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.nio.file.StandardOpenOption;
-import java.time.LocalDate;
-import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
 import java.util.Optional;
-import java.util.Set;
-import java.util.TreeMap;
-import java.util.TreeSet;
-import java.util.stream.Collectors;
-
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVRecord;
 import org.slf4j.Logger;
@@ -29,7 +17,7 @@ public class CoronaVirusLocalData {
 	private static final String CORONAVIRUS_DATA = "coronavirus.data";
 	private URL localUrl = CoronaVirusLocalData.class.getClassLoader().getResource(CORONAVIRUS_DATA);
 
-	Optional<Iterable<CSVRecord>> readLocaData() throws Exception {
+	Optional<Iterable<CSVRecord>> readLocaData() throws CoronaVirusDataException {
 		log.info("Read local data from: " + localUrl);
 		Optional<Iterable<CSVRecord>> records = Optional.empty();
 
@@ -40,9 +28,9 @@ public class CoronaVirusLocalData {
 			// Get the iterable records
 			Iterable<CSVRecord> trecords = CSVFormat.DEFAULT.withFirstRecordAsHeader().withIgnoreEmptyLines().parse(br);
 			records = Optional.of(trecords);
-		} catch (IOException e) {
+		} catch (Exception e) {
 			log.warn("Local data was NOT read from: " + localUrl);
-			throw new Exception(e);
+			throw new CoronaVirusDataException(e);
 		} finally {
 			try {
 				if (br != null)
@@ -50,7 +38,7 @@ public class CoronaVirusLocalData {
 			} catch (IOException e) {
 			}
 		}
-		
+
 		return records;
 	}
 

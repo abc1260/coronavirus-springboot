@@ -23,7 +23,7 @@ public class CoronaVirusLocalDataTest {
 //				}
 			} else
 				Assert.fail("No CSVRecord was read");
-		} catch (Exception e) {
+		} catch (CoronaVirusDataException e) {
 			Assert.fail(e.getMessage());
 		}
 	}

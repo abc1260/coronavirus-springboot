@@ -1,13 +1,39 @@
-Implement CoronaVirusLocalData.java
+Create A CoronaVirus Data Exception Class
+File: src/main/com/aikiinc/coronavirus/data/CoronaVirusDataException.java
 --------------------------------------------------------------------------------
-Here is the complete implementation:
+package com.aikiinc.coronavirus.data;
 
+public class CoronaVirusDataException extends Exception {
+	private static final long serialVersionUID = 6287801226203998237L;
+
+	public CoronaVirusDataException(String message) {
+		super(message);
+	}
+
+	public CoronaVirusDataException(Throwable cause) {
+		super(cause);
+	}
+
+	public CoronaVirusDataException() {
+	}
+
+}
+
+
+* Explained
+---------------------
+A traditional exception class.
+
+
+
+Use CoronaVirusDataException In The CoronaVirusLocalData.java
+--------------------------------------------------------------------------------
 public class CoronaVirusLocalData {
 	private Logger log = LoggerFactory.getLogger(CoronaVirusLocalData.class);
 	private static final String CORONAVIRUS_DATA = "coronavirus.data";
 	private URL localUrl = CoronaVirusLocalData.class.getClassLoader().getResource(CORONAVIRUS_DATA);
 
-	Optional<Iterable<CSVRecord>> readLocaData() throws Exception {
+	Optional<Iterable<CSVRecord>> readLocaData() throws CoronaVirusDataException {
 		log.info("Read local data from: " + localUrl);
 		Optional<Iterable<CSVRecord>> records = Optional.empty();
 
@@ -18,9 +44,9 @@ public class CoronaVirusLocalData {
 			// Get the iterable records
 			Iterable<CSVRecord> trecords = CSVFormat.DEFAULT.withFirstRecordAsHeader().withIgnoreEmptyLines().parse(br);
 			records = Optional.of(trecords);
-		} catch (IOException e) {
+		} catch (Exception e) {
 			log.warn("Local data was NOT read from: " + localUrl);
-			throw new Exception(e);
+			throw new CoronaVirusDataException(e);
 		} finally {
 			try {
 				if (br != null)
@@ -28,145 +54,38 @@ public class CoronaVirusLocalData {
 			} catch (IOException e) {
 			}
 		}
+
 		return records;
 	}
 
 }
 
 
-* Explained
--------------------
-Return a non null Iterable object of CSVRecord.
-	Optional<Iterable<CSVRecord>>
+Use CoronaVirusDataException In The CoronaVirusLocalDataTest.java
+--------------------------------------------------------------------------------
+public class CoronaVirusLocalDataTest {
+	private static Logger LOG = LoggerFactory.getLogger(CoronaVirusLocalDataTest.class);
 
-Initialize a non empty iterable:
-	Optional<Iterable<CSVRecord>> records = Optional.empty();
-
-Read the data from the local file (src/resources/coronavirus.data) as an input stream:
-	new InputStreamReader(localUrl.openStream())
-
-Buffer reading the data:
-		br = new BufferedReader(new InputStreamReader(localUrl.openStream()));
-
-Use the Reading Apache Commons CSV - CSVFormat to read first record as Header:
-	CSVFormat.DEFAULT.withFirstRecordAsHeader()
-
-Ignore Empty Lines:	
-		.withIgnoreEmptyLines()
-		
-Use the BufferedReader to stream data:
-		.parse(br);
-
-Return an Optional value for the read CSV records:		
-		records = Optional.of(trecords);
-
-Do the norma exception handling:
-	} catch (IOException e) {
-		log.warn("Local data was NOT read from: " + localUrl);
-		throw new Exception(e);
-	} finally {
+	@Test
+	public void readLocaData() {
 		try {
-			if (br != null)
-				br.close();
-		} catch (IOException e) {
+			Optional<Iterable<CSVRecord>> records = new CoronaVirusLocalData().readLocaData();
+			if (records.isPresent()) {
+				Assert.assertTrue(records.get().iterator().hasNext());
+				
+//				try {
+//					records.get().forEach(e -> System.out.println(e));
+//				} catch (Exception e) {
+//				}
+			} else
+				Assert.fail("No CSVRecord was read");
+		} catch (CoronaVirusDataException e) {
+			Assert.fail(e.getMessage());
 		}
 	}
 
-Finally return the read records	
-	return records;
-
-
-
-ReImplemented CoronaVirusLocalDataTest.java readLocaData()
---------------------------------------------------------------------------------
-Here is the new code implementation:
-
-@Test
-public void readLocaData() {
-	try {
-		Optional<Iterable<CSVRecord>> records = new CoronaVirusLocalData().readLocaData();
-		if (records.isPresent()) {
-			Assert.assertTrue(records.get().iterator().hasNext());
-			
-			//try {
-			//		records.get().forEach(e -> System.out.println(e));
-			//} catch (Exception e) {
-			//}
-		} else
-			Assert.fail("No CSVRecord was read");
-	} catch (Exception e) {
-		Assert.fail(e.getMessage());
-	}
 }
 
-* Explained
-----------------
-Read the local data:
-	Optional<Iterable<CSVRecord>> records = new CoronaVirusLocalData().readLocaData();
 
-If records are present - this avoids the null value error
-	if (records.isPresent()) {
-
-Assert that we read entries:
-	Assert.assertTrue(records.get().iterator().hasNext());
-
-Read all the data using Java 8 stream and print the result of each entry:	
-	//try {
-	//		records.get().forEach(e -> System.out.println(e));
-	//} catch (Exception e) {
-	//}
-
-If there are not entries show that test failed:
-	Assert.fail("No CSVRecord was read");
-
-If error show failed message:
-	} catch (Exception e) {
-		Assert.fail(e.getMessage());
-	}
-
-
-
-Rerun CoronaVirusLocalDataTest.java
---------------------------------------------------------------------------------
-Run a single test using maven:
-	mvn test -Dtest=CoronaVirusLocalDataTest#readLocaData
-
-	Call a single test: -Dtest=CoronaVirusLocalDataTest#readLocaData
-	
-Successful run of test:
-	INFO] Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, 
-
-	We ran 1 test and it succeeded.
-
-
-
-Show Data When running  CoronaVirusLocalDataTest.java
---------------------------------------------------------------------------------
-As I develop I like to show real data access. Uncomment and to see data:
-	try {
-			records.get().forEach(e -> System.out.println(e));
-	} catch (Exception e) {
-	}
-
-Rerun test and see read data as:
-	CSVRecord [comment='null', recordNumber=1, values=[Hubei, Mainland China, 2020-03-07T11:13:04, 67666, 2959, 43500, 30.9756, 112.2707]]
-	CSVRecord [comment='null', recordNumber=2, values=[, South Korea, 2020-03-07T10:13:22, 7041, 44, 135, 36.0000, 128.0000]]
-	CSVRecord [comment='null', recordNumber=3, values=[, Italy, 2020-03-07T17:33:03, 5883, 233, 589, 43.0000, 12.0000]]
-	CSVRecord [comment='null', recordNumber=4, values=[, Iran, 2020-03-07T17:43:05, 5823, 145, 1669, 32.0000, 53.0000]]
-	CSVRecord [comment='null', recordNumber=5, values=[Guangdong, Mainland China, 2020-03-07T10:43:02, 1352, 7, 1237, 23.3417, 113.4244]]
-	.
-	.
-
-
-Make sure Entire SpringBoot Applications Is Still Running
---------------------------------------------------------------------------------
-cd  coronavirus_springboot_restservice
-
-Type on command line either:
-mvnw spring-boot:run
-or
-mnw spring-boot:run
-
-We should still see in the browser:
-    {"message":"Greetings from Spring Boot!"}
+Rerun test and should be as before.
 
