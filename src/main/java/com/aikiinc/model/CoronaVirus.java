@@ -1,6 +1,6 @@
 package com.aikiinc.model;
 
-public class CoronaVirusData {
+public class CoronaVirus {
 	private String province;
 	private String region;
 	private String lastUpdate;
@@ -97,7 +97,7 @@ public class CoronaVirusData {
 			return false;
 		if (getClass() != obj.getClass())
 			return false;
-		CoronaVirusData other = (CoronaVirusData) obj;
+		CoronaVirus other = (CoronaVirus) obj;
 		if (confirmed == null) {
 			if (other.confirmed != null)
 				return false;

@@ -1,0 +1,12 @@
+Clean Up The Code
+-------------------------------------------------------------------------------
+Change siteUrl to remoteUrl in all the code. 
+
+Change model class from CoronaVirusData.java to CoronaVirus.java in all the code.
+We don't need to add suffix Data. CoronaVirus.java is a model data for the 
+corona virus.
+
+Remove the CoronaVirusData interface and it's reference in the CoronaVirusLocalData
+and CoronaVirulsRemoteData.
+
+

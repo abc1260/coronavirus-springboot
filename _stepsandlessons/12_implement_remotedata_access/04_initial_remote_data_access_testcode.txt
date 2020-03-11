@@ -63,7 +63,7 @@ We see it fails
 Move reading Remote File For Prior Day
 --------------------------------------------------------------------------------
 Uncommenting CoronaVirusRemoteData.java code:
-	void setRemoteConnection() throws CoronaVirusDataException {
+	void setRemoteConnection() throws CoronaVirusException {
 	    String sdate = LocalDate.now().minusDays(1).format(DateTimeFormatter.ofPattern("MM-dd-yyyy"));
 	    log.debug("Load coronavirus data for date: " + sdate);
 

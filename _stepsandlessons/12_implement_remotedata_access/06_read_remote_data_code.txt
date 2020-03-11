@@ -3,20 +3,20 @@ File: src/main/com/aikiinc/coronavirus/data/CoronaVirusRemoteData.java
 -------------------------------------------------------------------------------
 Add this method to the CoronaVirusRemoteData.java:
 
-Optional<Iterable<CSVRecord>> readRemoteData() throws CoronaVirusDataException {
-	log.info("Read remote data from:  " + siteUrl);
+Optional<Iterable<CSVRecord>> readRemoteData() throws CoronaVirusException {
+	log.info("Read remote data from:  " + remoteUrl);
 	Optional<Iterable<CSVRecord>> records = Optional.empty();
 
 	BufferedReader br = null;
 	try {
-		br = new BufferedReader(new InputStreamReader(siteUrl.openStream()));
+		br = new BufferedReader(new InputStreamReader(remoteUrl.openStream()));
 
 		// Get the iterable records
 		Iterable<CSVRecord> trecords = CSVFormat.DEFAULT.withFirstRecordAsHeader().withIgnoreEmptyLines().parse(br);
 		records = Optional.of(trecords);
 	} catch (IOException e) {
-		log.warn("Remote data was NOT read from: " + siteUrl);
-		throw new CoronaVirusDataException(e);
+		log.warn("Remote data was NOT read from: " + remoteUrl);
+		throw new CoronaVirusException(e);
 	} finally {
 		try {
 			if (br != null)
@@ -41,7 +41,7 @@ Read the data from the local file (src/resources/coronavirus.data) as an input s
 	new InputStreamReader(localUrl.openStream())
 
 Buffer reading the data:
-		br = new BufferedReader(new InputStreamReader(siteUrl.openStream()));
+		br = new BufferedReader(new InputStreamReader(remoteUrl.openStream()));
 
 Use the Reading Apache Commons CSV - CSVFormat to read first record as Header:
 	CSVFormat.DEFAULT.withFirstRecordAsHeader()
@@ -57,7 +57,7 @@ Return an Optional value for the read CSV records:
 
 Do the norma exception handling:
 	} catch (IOException e) {
-		log.warn("Remote data was NOT read from: " + siteUrl);
+		log.warn("Remote data was NOT read from: " + remoteUrl);
 		throw new Exception(e);
 	} finally {
 		try {
@@ -91,7 +91,7 @@ public void readRemoteData() {
 //				}
 		} else
 			Assert.fail("No CSVRecord was read");
-	} catch (CoronaVirusDataException e) {
+	} catch (CoronaVirusException e) {
 		Assert.fail(e.getMessage());
 	}
 }
@@ -120,7 +120,7 @@ If there are not entries show that test failed:
 	Assert.fail("No CSVRecord was read");
 
 If error show failed message:
-	} catch (CoronaVirusDataException e) {
+	} catch (CoronaVirusException e) {
 		Assert.fail(e.getMessage());
 	}
 

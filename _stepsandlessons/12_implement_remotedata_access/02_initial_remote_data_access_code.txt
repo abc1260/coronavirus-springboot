@@ -59,36 +59,36 @@ public class CoronaVirusRemoteData {
 	private Logger log = LoggerFactory.getLogger(CoronaVirusRemoteData.class);
 	public final static String SOURCE_URL_PREFIX = "https://github.com/CSSEGISandData/COVID-19/tree/master/csse_covid_19_data/csse_covid_19_daily_reports/";
 	private String sourceUrlPrefix;
-	private URL siteUrl;
+	private URL remoteUrl;
 	private String dateLoaded;
 
-	public CoronaVirusRemoteData(String sourceUrlPrefix) throws CoronaVirusDataException {
+	public CoronaVirusRemoteData(String sourceUrlPrefix) throws CoronaVirusException {
 		this.sourceUrlPrefix = sourceUrlPrefix;
 
 		log.debug(this.sourceUrlPrefix);
 	}
 
-	public void process() throws CoronaVirusDataException {
+	public void process() throws CoronaVirusException {
 		try {
 			setRemoteConnection();
-		} catch (CoronaVirusDataException e) {
+		} catch (CoronaVirusException e) {
 		}
 	}
 
-	void setRemoteConnection() throws CoronaVirusDataException {
+	void setRemoteConnection() throws CoronaVirusException {
 		String sdate = LocalDate.now().format(DateTimeFormatter.ofPattern("MM-dd-yyyy"));
 		//String sdate = LocalDate.now().minusDays(1).format(DateTimeFormatter.ofPattern("MM-dd-yyyy"));
 		log.debug("Load coronavirus data for date: " + sdate);
 
 		String sourceUrl = SOURCE_URL_PREFIX + sdate + ".csv";
 		try {
-			siteUrl = new URL(sourceUrl);
+			remoteUrl = new URL(sourceUrl);
 
-			siteUrl.getContent();
+			remoteUrl.getContent();
 			
 			this.dateLoaded = sdate;
 
-			log.debug("\tLoading data from: " + siteUrl);
+			log.debug("\tLoading data from: " + remoteUrl);
 		} catch (Exception e) {
 			log.warn("\tCould not load data from: " + sourceUrl);
 			log.warn("\tException: " + e.getMessage());
@@ -104,23 +104,23 @@ Capture the remote source URL prefix:
 	private String sourceUrlPrefix;
 
 Create a Http access to the remote URL:
-	private URL siteUrl;
+	private URL remoteUrl;
 
 Capture the date we processed reading the data:
 	private String dateLoaded;
 
 
 Pass into the contructor the source url preffix:
-    public CoronaVirusRemoteData(String sourceUrlPrefix) throws CoronaVirusDataException {
+    public CoronaVirusRemoteData(String sourceUrlPrefix) throws CoronaVirusException {
 		this.sourceUrlPrefix = sourceUrlPrefix;
 		log.debug(this.sourceUrlPrefix);
 	}
 
 Process access to the remote data, call the setRemoteConnection():
-	public void process() throws CoronaVirusDataException {
+	public void process() throws CoronaVirusException {
 		try {
 			setRemoteConnection();
-		} catch (CoronaVirusDataException e) {
+		} catch (CoronaVirusException e) {
 		}
 	}
 
@@ -130,9 +130,9 @@ Remote connections method setRemoteConnection() implementation:
     Create the remote url with targeted date:
         String sourceUrl = SOURCE_URL_PREFIX + sdate + ".csv";
     Store the site URL object:
-        siteUrl = new URL(sourceUrl);siteUrl = new URL(sourceUrl);
+        remoteUrl = new URL(sourceUrl);remoteUrl = new URL(sourceUrl);
     Check if we can read the remote file. Pre check to throw an exception:
-		siteUrl.getContent();
+		remoteUrl.getContent();
 	Capture the current date being processed:		
 			this.dateLoaded = sdate;
 

@@ -6,13 +6,13 @@ Create a class called CoronaVirusLocalData.java
 Here is the beginning code:
 	package com.aikiinc.model;
 
-	public class CoronaVirusData {
+	public class CoronaVirus {
 	}
 
 Here is its completed code:
 	package com.aikiinc.model;
 
-	public class CoronaVirusData {
+	public class CoronaVirus {
 		private String province;
 		private String region;
 		private String lastUpdate;
@@ -109,7 +109,7 @@ Here is its completed code:
 				return false;
 			if (getClass() != obj.getClass())
 				return false;
-			CoronaVirusData other = (CoronaVirusData) obj;
+			CoronaVirus other = (CoronaVirus) obj;
 			if (confirmed == null) {
 				if (other.confirmed != null)
 					return false;
@@ -156,7 +156,7 @@ Here is its completed code:
 		@Override
 		public String toString() {
 			StringBuilder builder = new StringBuilder();
-			builder.append("CoronaVirusData [province=");
+			builder.append("CoronaVirus [province=");
 			builder.append(province);
 			builder.append(", region=");
 			builder.append(region);

@@ -18,7 +18,6 @@ public class CoronaVirusRemoteDataTest {
 		try {
 			coronaVirusRemoteData = new CoronaVirusRemoteData(CoronaVirusRemoteData.SOURCE_URL_PREFIX);
 		} catch (Exception e) {
-			e.printStackTrace();
 			Assert.fail(e.getMessage());
 		}
 	}
@@ -28,7 +27,6 @@ public class CoronaVirusRemoteDataTest {
 		try {
 			coronaVirusRemoteData.process();
 		} catch (Exception e) {
-			e.printStackTrace();
 			Assert.fail(e.getMessage());
 		}
 	}
@@ -38,14 +36,14 @@ public class CoronaVirusRemoteDataTest {
 		try {
 			coronaVirusRemoteData.process();
 			
-			Optional<Iterable<CSVRecord>> records = coronaVirusRemoteData.readRemoteData();
+			Optional<Iterable<CSVRecord>> records = coronaVirusRemoteData.readData();
 			if (records.isPresent()) {
 				Assert.assertTrue(records.get().iterator().hasNext());
 				
-				try {
-					records.get().forEach(e -> System.out.println(e));
-				} catch (Exception e) {
-				}
+//				try {
+//					records.get().forEach(e -> System.out.println(e));
+//				} catch (Exception e) {
+//				}
 			} else
 				Assert.fail("No CSVRecord was read");
 		} catch (CoronaVirusDataException e) {

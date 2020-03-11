@@ -1,0 +1,38 @@
+Repetative Interface While Accessing Data
+-------------------------------------------------------------------------------
+If you look at what we have so far the CoronaVirusLocalData.java and
+CoronaVirusRemoteData.java are reading data using:
+readLocalData();
+readRemoteData();
+
+What they are both doing is reading data: readData().
+Not only that, its repetative code.
+
+
+
+Let Us Create An Interface That Abstracts This Function
+-------------------------------------------------------------------------------
+public interface CornaVirusData {
+	Optional<Iterable<CSVRecord>> readData() throws CoronaVirusDataException;
+}
+
+Both local and remote date will implement this interface. Change the classes to:
+public class CoronaVirusLocalData implements CornaVirusData {
+public class CoronaVirusRemoteData implements CornaVirusData {
+
+We of course get the error that we should implement the readData().
+Change readLocalData() and readRemoteData() methods to readData().
+
+Now our test are broken, CoronaVirusLocalDataTest.java and
+CoronaVirusRemoteDataTest.java. Fix by changing readLocalData() and 
+readRemoteData() methods to readData().
+
+
+
+Rerun The Test
+-------------------------------------------------------------------------------
+All should be as before.
+
+
+
+

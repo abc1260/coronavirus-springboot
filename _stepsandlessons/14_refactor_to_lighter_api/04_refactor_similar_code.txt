@@ -1,0 +1,60 @@
+readData() Code And Function Are Similar - Refactpr
+-------------------------------------------------------------------------------
+CoronaVirusLocalDataTest.java and CoronaVirusRemoteDataTest.java use similar code,
+they take in a URL stream and process it.
+
+public class CoronaVirusLocalData.java
+	public Optional<Iterable<CSVRecord>> readData() throws CoronaVirusDataException {
+		log.info("Read local data from: " + localUrl);
+		Optional<Iterable<CSVRecord>> records = Optional.empty();
+
+		BufferedReader br = null;
+		try {
+			br = new BufferedReader(new InputStreamReader(localUrl.openStream()));
+        .
+
+public class CoronaVirusRemoteData.java
+	public Optional<Iterable<CSVRecord>> readData() throws CoronaVirusDataException {
+		log.info("Read local data from: " + remoteUrl);
+		Optional<Iterable<CSVRecord>> records = Optional.empty();
+
+		BufferedReader br = null;
+		try {
+			br = new BufferedReader(new InputStreamReader(remoteUrl.openStream()));
+        .
+
+
+
+Scenarios To Refactor readData() Code And Function Are Similar
+-------------------------------------------------------------------------------
+Case 1: Use base class to capture readData()
+    Let us abstract this function to an abstract class CoronaVirusDataBase.java
+    Change the implementation to:
+
+    public class CoronaVirusDataBase {
+	    public Optional<Iterable<CSVRecord>> readData(URL dataUrl) throws CoronaVirusDataException {
+		    log.info("Read local data from: " + localUrl);
+		    Optional<Iterable<CSVRecord>> records = Optional.empty();
+
+		    BufferedReader br = null;
+		    try {
+			    br = new BufferedReader(new InputStreamReader(dataUrl.openStream()));
+        .
+
+    * Explained
+    -----------------
+    In the base class, let us code the implemented code and have the 
+    CoronaVirusLocalData.java and CoronaVirusRemoteData.java inherit this class:
+    
+    public class CoronaVirusLocalData extends CoronaVirusDataBase
+    public class CoronaVirusRemoteData extends CoronaVirusDataBase
+
+    DONT USE:
+        However we will not be using this approach. Personally I like lightweight APIs. 
+        The inheritance approach is a bit heavy to me.
+
+
+Case 2: Create a helper or utility class that implements readData()
+    Personally I like this better, its a lighter APIs. Less moving
+    parts.
+
