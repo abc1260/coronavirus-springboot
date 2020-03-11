@@ -1,51 +1,24 @@
 package com.aikiinc.coronavirus.data;
 
-import java.util.Optional;
-
-import org.apache.commons.csv.CSVRecord;
+import java.util.List;
 import org.junit.Assert;
-import org.junit.BeforeClass;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import com.aikiinc.model.CoronaVirus;
+
 public class CoronaVirusRemoteDataTest {
 	private static Logger LOG = LoggerFactory.getLogger(CoronaVirusRemoteDataTest.class);
-	private static CoronaVirusRemoteData coronaVirusRemoteData;
-
-	@BeforeClass
-	public static void setUp() {
-		try {
-			coronaVirusRemoteData = new CoronaVirusRemoteData(CoronaVirusRemoteData.SOURCE_URL_PREFIX);
-		} catch (Exception e) {
-			Assert.fail(e.getMessage());
-		}
-	}
 
 	@Test
-	public void process() {
+	public void getCoronaVirusList() {
 		try {
-			coronaVirusRemoteData.process();
-		} catch (Exception e) {
-			Assert.fail(e.getMessage());
-		}
-	}
+			List<CoronaVirus> coronaDataList = CoronaVirusRemoteData
+					.getInstance(CoronaVirusRemoteData.SOURCE_URL_PREFIX).getCoronaVirusList();
+			Assert.assertTrue(coronaDataList.size() > 0);
 
-	@Test
-	public void readRemoteData() {
-		try {
-			coronaVirusRemoteData.process();
-			
-			Optional<Iterable<CSVRecord>> records = coronaVirusRemoteData.readData();
-			if (records.isPresent()) {
-				Assert.assertTrue(records.get().iterator().hasNext());
-				
-//				try {
-//					records.get().forEach(e -> System.out.println(e));
-//				} catch (Exception e) {
-//				}
-			} else
-				Assert.fail("No CSVRecord was read");
+			coronaDataList.forEach(e -> LOG.debug(e.toString()));
 		} catch (CoronaVirusDataException e) {
 			Assert.fail(e.getMessage());
 		}

@@ -1,0 +1,117 @@
+Move The Read Data to The CoronaVirus Model
+-------------------------------------------------------------------------------
+We have read the data, the local and remote data. We have to get it as the model 
+CoronaVirus.java. 
+
+
+Extract The Into The CoronaVirus.java
+-------------------------------------------------------------------------------
+Add this utility to the CoronaVirusUtil.java
+
+public static List<CoronaVirus> extractData(Optional<Iterable<CSVRecord>> records) {
+	List<CoronaVirus> coronaVirusDataList = new ArrayList<CoronaVirus>();
+	regionKeys = new TreeSet<String>();
+
+	if (records.isPresent()) {
+		int j = 1;
+		for (CSVRecord record : records.get()) {
+			CoronaVirus data = new CoronaVirus();
+
+			try {
+				data.setProvince(record.get("Province/State"));
+			} catch (Exception e) {
+				data.setProvince(",");
+				LOG.warn(e.getMessage());
+			}
+			try {
+				data.setRegion(record.get("Country/Region").trim());
+			} catch (Exception e) {
+				data.setRegion(",");
+				LOG.warn(e.getMessage());
+			}
+			try {
+				data.setLastUpdate(record.get("Last Update"));
+			} catch (Exception e) {
+				data.setLastUpdate(",");
+				LOG.warn(e.getMessage());
+			}
+			try {
+				data.setConfirmed(record.get("Confirmed"));
+			} catch (Exception e) {
+				data.setConfirmed(",");
+				LOG.warn(e.getMessage());
+			}
+			try {
+				data.setDeaths(record.get("Deaths"));
+			} catch (Exception e) {
+				data.setDeaths(",");
+				LOG.warn(e.getMessage());
+			}
+			try {
+				data.setRecovered(record.get("Recovered"));
+			} catch (Exception e) {
+				data.setRecovered(",");
+				LOG.warn(e.getMessage());
+			}
+			try {
+				data.setLatitude(record.get("Latitude"));
+			} catch (Exception e) {
+				data.setLatitude(",");
+				LOG.warn(e.getMessage());
+			}
+			try {
+				data.setLongitude(record.get("Longitude"));
+			} catch (Exception e) {
+				data.setLongitude("");
+				LOG.warn(e.getMessage());
+			}
+
+			LOG.debug(j++ + ": " + data.toString());
+
+			if (data.getRegion() != null && data.getRegion().length() > 1)
+				coronaVirusDataList.add(data);
+
+			// Get all reported regions (countries) as key
+			if (data.getProvince() != null && !data.getProvince().isEmpty() && data.getRegion().length() > 1)
+				regionKeys.add(data.getRegion());
+		}
+	}
+
+	return coronaVirusDataList;
+}
+
+
+* Explained
+----------------
+Passed the read CSVRecord as parameter:
+    public static List<CoronaVirus> extractData(Optional<Iterable<CSVRecord>> records) {
+
+Create a List to capture the read CoronaVirus data:
+	List<CoronaVirus> coronaVirusDataList = new ArrayList<CoronaVirus>();
+
+Create a data member to capture unique region/country:
+	regionKeys = new TreeSet<String>();
+
+	data.setProvince(record.get("Province/State"));
+	data.setRegion(record.get("Country/Region").trim());
+	data.setLastUpdate(record.get("Last Update"));
+	data.setConfirmed(record.get("Confirmed"));
+	data.setDeaths(record.get("Deaths"));
+	data.setRecovered(record.get("Recovered"));
+	data.setLatitude(record.get("Latitude"));
+	data.setLongitude(record.get("Longitude"));
+
+Add the data to the list of CoronaVirus:
+	coronaVirusDataList.add(data);
+
+Capture unique region/coutnry:
+	regionKeys.add(data.getRegion());
+
+Return the list of CoronaVirus:
+	return coronaVirusDataList;
+
+
+
+
+
+

@@ -7,7 +7,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import com.aikiinc.coronavirus.utility.CoronaVirusUtil;
+import com.aikiinc.model.CoronaVirus;
 
+import java.util.List;
 import java.util.Optional;
 import org.apache.commons.csv.CSVRecord;
 
@@ -17,15 +19,30 @@ public class CoronaVirusRemoteData {
 	private String sourceUrlPrefix;
 	private URL remoteUrl;
 	private String dateLoaded;
+	private Optional<Iterable<CSVRecord>> records = Optional.empty();
+	private List<CoronaVirus> coronaVirusList;
 
-	public CoronaVirusRemoteData(String sourceUrlPrefix) throws CoronaVirusDataException {
+	private CoronaVirusRemoteData() {
+	}
+
+	private CoronaVirusRemoteData(String sourceUrlPrefix) throws CoronaVirusDataException {
 		this.sourceUrlPrefix = sourceUrlPrefix;
 		log.debug(this.sourceUrlPrefix);
 	}
 
-	public void process() throws CoronaVirusDataException {
+	public static final CoronaVirusRemoteData getInstance(String sourceUrlPrefix) throws CoronaVirusDataException {
+		CoronaVirusRemoteData coronaVirusRemoteData = new CoronaVirusRemoteData(sourceUrlPrefix);
+		coronaVirusRemoteData.process();
+
+		return coronaVirusRemoteData;
+	}
+
+	private void process() throws CoronaVirusDataException {
 		try {
 			setRemoteConnection();
+			readData();
+			extractData();
+			CoronaVirusUtil.closeBuffer();
 		} catch (CoronaVirusDataException e) {
 		}
 	}
@@ -51,10 +68,17 @@ public class CoronaVirusRemoteData {
 		}
 	}
 
-	public Optional<Iterable<CSVRecord>> readData() throws CoronaVirusDataException {
-		log.info("Read remote data from:  " + remoteUrl);
+	private void readData() throws CoronaVirusDataException {
+		log.info("Read Remote data from: " + remoteUrl);
+		records = CoronaVirusUtil.readData(remoteUrl);
+	}
 
-		return CoronaVirusUtil.readData(remoteUrl);
+	private void extractData() {
+		coronaVirusList = CoronaVirusUtil.extractData(records);
+	}
+
+	public List<CoronaVirus> getCoronaVirusList() {
+		return coronaVirusList;
 	}
 
 }

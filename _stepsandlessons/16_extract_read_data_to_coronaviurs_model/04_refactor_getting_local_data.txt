@@ -1,0 +1,120 @@
+Refactor Getting LocalData Using Extracted CoronaVirus Data
+-------------------------------------------------------------------------------
+The CoronaVirusUtil is extracting the read CoronaVirus data. Let refactor getting
+the local CoronaVirus data.
+
+public class CoronaVirusLocalData {
+	private Logger log = LoggerFactory.getLogger(CoronaVirusLocalData.class);
+	private static final String CORONAVIRUS_DATA = "coronavirus.data";
+	private URL localUrl = CoronaVirusLocalData.class.getClassLoader().getResource(CORONAVIRUS_DATA);
+	private Optional<Iterable<CSVRecord>> records = Optional.empty();
+	private List<CoronaVirus> coronaVirusList;
+
+	private CoronaVirusLocalData() {
+	}
+
+	/**
+	 * Create a CoronaVirusLocalData instance and process loading the data
+	 * 
+	 * @return
+	 * @throws CoronaVirusDataException
+	 */
+	public static final CoronaVirusLocalData getInstance() throws CoronaVirusDataException {
+		CoronaVirusLocalData coronaVirusLocalData = new CoronaVirusLocalData();
+		coronaVirusLocalData.process();
+
+		return coronaVirusLocalData;
+	}
+
+	public void process() throws CoronaVirusDataException {
+		readData();
+		extractData();
+		CoronaVirusUtil.closeBuffer();
+	}
+
+	private void readData() throws CoronaVirusDataException {
+		log.info("Read local data from: " + localUrl);
+		records = CoronaVirusUtil.readData(localUrl);
+	}
+
+	private void extractData() {
+		coronaVirusList = CoronaVirusUtil.extractData(records);
+	}
+
+	public List<CoronaVirus> getCoronaVirusList() {
+		return coronaVirusList;
+	}
+
+}
+
+
+* Explained
+-----------------
+Create and Singleton instance of getting local data:
+	private CoronaVirusLocalData() {
+	}
+
+Create a CoronaVirusLocalData instance and process loading the data:
+	public static final CoronaVirusLocalData getInstance() throws CoronaVirusDataException {
+		CoronaVirusLocalData coronaVirusLocalData = new CoronaVirusLocalData();
+		coronaVirusLocalData.process();
+
+		return coronaVirusLocalData;
+	}
+
+Create a combination of processing reading the data and crating the CoronaVirus list:
+	public void process() throws CoronaVirusDataException {
+		readData();
+		extractData();
+        CoronaVirusUtil.closeBuffer();
+	}
+
+Read the corona virus data from file. We no longer need to externally access this data.
+We need the CoronaVirus List.
+	private void readData() throws CoronaVirusDataException {
+		log.info("Read local data from: " + localUrl);
+		records = CoronaVirusUtil.readData(localUrl);
+	}
+
+Extract the CoronaVirus data a list of CoronaVirus model:
+	private void extractData() {
+		coronaVirusList = CoronaVirusUtil.extractData(records);
+	}
+
+These are the public accessor method to the created data:
+	public Optional<Iterable<CSVRecord>> getReadData() {
+		return records;
+	}
+
+	public List<CoronaVirus> getCoronaVirusList() {
+		return coronaVirusList;
+	}
+
+
+
+Recreate The LocalData Test
+-------------------------------------------------------------------------------
+public class CoronaVirusLocalDataTest {
+	private static Logger LOG = LoggerFactory.getLogger(CoronaVirusLocalDataTest.class);
+	private static CoronaVirusLocalData coronaVirusLocalData;
+
+	@Test
+	public void getCoronaVirusList() {
+		try {
+			List<CoronaVirus> coronaDataList = CoronaVirusLocalData.getInstance().getCoronaVirusList();
+			Assert.assertTrue(coronaDataList.size() > 0);
+
+			//coronaDataList.forEach(e -> System.out.println(e));
+		} catch (CoronaVirusDataException e) {
+			Assert.fail(e.getMessage());
+		}
+	}
+
+}
+
+* Explained
+-------------
+Get an instance of the CoronaVirusLocalData and get the list of CoranaVirus
+	List<CoronaVirus> coronaDataList = CoronaVirusLocalData.getInstance().getCoronaVirusList();
+	Assert.assertTrue(coronaDataList.size() > 0);
+

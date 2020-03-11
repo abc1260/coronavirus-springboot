@@ -1,0 +1,191 @@
+Refactor Getting RemoteData Using Extracted CoronaVirus Data
+-------------------------------------------------------------------------------
+The CoronaVirusUtil is extracting the read CoronaVirus data. Let refactor getting
+the Remote CoronaVirus data.
+
+public class CoronaVirusRemoteData {
+	private Logger log = LoggerFactory.getLogger(CoronaVirusRemoteData.class);
+	public final static String SOURCE_URL_PREFIX = "https://raw.githubusercontent.com/CSSEGISandData/COVID-19/master/csse_covid_19_data/csse_covid_19_daily_reports/";
+	private String sourceUrlPrefix;
+	private URL remoteUrl;
+	private String dateLoaded;
+	private Optional<Iterable<CSVRecord>> records = Optional.empty();
+	private List<CoronaVirus> coronaVirusList;
+
+	private CoronaVirusRemoteData() {
+	}
+
+	private CoronaVirusRemoteData(String sourceUrlPrefix) throws CoronaVirusDataException {
+		this.sourceUrlPrefix = sourceUrlPrefix;
+		log.debug(this.sourceUrlPrefix);
+	}
+
+	/**
+	 * Create a CoronaVirusRemoteData instance and process loading the data
+	 * 
+	 * @return
+	 * @throws CoronaVirusDataException
+	 */
+	public static final CoronaVirusRemoteData getInstance(String sourceUrlPrefix) throws CoronaVirusDataException {
+		CoronaVirusRemoteData coronaVirusRemoteData = new CoronaVirusRemoteData(sourceUrlPrefix);
+		coronaVirusRemoteData.process();
+
+		return coronaVirusRemoteData;
+	}
+
+	private void process() throws CoronaVirusDataException {
+		try {
+			setRemoteConnection();
+			readData();
+			extractData();
+			CoronaVirusUtil.closeBuffer();
+		} catch (CoronaVirusDataException e) {
+		}
+	}
+
+	void setRemoteConnection() throws CoronaVirusDataException {
+		// String sdate =
+		// LocalDate.now().format(DateTimeFormatter.ofPattern("MM-dd-yyyy"));
+		String sdate = LocalDate.now().minusDays(1).format(DateTimeFormatter.ofPattern("MM-dd-yyyy"));
+		log.debug("Load coronavirus data for date: " + sdate);
+
+		String sourceUrl = SOURCE_URL_PREFIX + sdate + ".csv";
+		try {
+			this.remoteUrl = new URL(sourceUrl);
+
+			remoteUrl.getContent();
+
+			this.dateLoaded = sdate;
+
+			log.debug("\tLoading data from: " + remoteUrl);
+		} catch (Exception e) {
+			log.warn("\tCould not load data from: " + sourceUrl);
+			log.warn("\tException: " + e.getMessage());
+		}
+	}
+
+	private void readData() throws CoronaVirusDataException {
+		log.info("Read Remote data from: " + remoteUrl);
+		records = CoronaVirusUtil.readData(remoteUrl);
+	}
+
+	private void extractData() {
+		coronaVirusList = CoronaVirusUtil.extractData(records);
+	}
+
+	public List<CoronaVirus> getCoronaVirusList() {
+		return coronaVirusList;
+	}
+
+}
+
+
+* Explained
+-----------------
+Create and Singleton instance of getting Remote data:
+	private CoronaVirusRemoteData() {
+	}
+
+	private CoronaVirusRemoteData(String sourceUrlPrefix) throws CoronaVirusDataException {
+		this.sourceUrlPrefix = sourceUrlPrefix;
+		log.debug(this.sourceUrlPrefix);
+	}
+
+Create a CoronaVirusRemoteData instance and process loading the data:
+	public static final CoronaVirusRemoteData getInstance(String sourceUrlPrefix) throws CoronaVirusDataException {
+		CoronaVirusRemoteData coronaVirusRemoteData = new CoronaVirusRemoteData(sourceUrlPrefix);
+		coronaVirusRemoteData.process();
+
+		return coronaVirusRemoteData;
+	}
+
+Create a combination of processing reading the data and crating the CoronaVirus list:
+	public void process() throws CoronaVirusDataException {
+		readData();
+		extractData();
+        CoronaVirusUtil.closeBuffer();
+	}
+
+Read the corona virus data from file. We no longer need to externally access this data.
+We need the CoronaVirus List.
+	private void process() throws CoronaVirusDataException {
+		try {
+			setRemoteConnection();
+			readData();
+			extractData();
+			CoronaVirusUtil.closeBuffer();
+		} catch (CoronaVirusDataException e) {
+		}
+	}
+
+Set the Remote Url Combined With SOURCE_URL_PREFIX and The File Name
+	void setRemoteConnection() throws CoronaVirusDataException {
+		// String sdate =
+		// LocalDate.now().format(DateTimeFormatter.ofPattern("MM-dd-yyyy"));
+		String sdate = LocalDate.now().minusDays(1).format(DateTimeFormatter.ofPattern("MM-dd-yyyy"));
+		log.debug("Load coronavirus data for date: " + sdate);
+
+		String sourceUrl = SOURCE_URL_PREFIX + sdate + ".csv";
+		try {
+			this.remoteUrl = new URL(sourceUrl);
+
+			remoteUrl.getContent();
+
+			this.dateLoaded = sdate;
+
+			log.debug("\tLoading data from: " + remoteUrl);
+		} catch (Exception e) {
+			log.warn("\tCould not load data from: " + sourceUrl);
+			log.warn("\tException: " + e.getMessage());
+		}
+	}
+
+
+Read the remote data:
+	private void readData() throws CoronaVirusDataException {
+		log.info("Read Remote data from: " + remoteUrl);
+		records = CoronaVirusUtil.readData(remoteUrl);
+	}
+
+Extract the CoronaVirus data a list of CoronaVirus model:
+	private void extractData() {
+		coronaVirusList = CoronaVirusUtil.extractData(records);
+	}
+
+These are the public accessor method to the created data:
+	public Optional<Iterable<CSVRecord>> getReadData() {
+		return records;
+	}
+
+	public List<CoronaVirus> getCoronaVirusList() {
+		return coronaVirusList;
+	}
+
+
+
+Recreate The RemoteData Test
+-------------------------------------------------------------------------------
+public class CoronaVirusRemoteDataTest {
+	private static Logger LOG = LoggerFactory.getLogger(CoronaVirusRemoteDataTest.class);
+
+	@Test
+	public void getCoronaVirusList() {
+		try {
+			List<CoronaVirus> coronaDataList = CoronaVirusRemoteData
+					.getInstance(CoronaVirusRemoteData.SOURCE_URL_PREFIX).getCoronaVirusList();
+			Assert.assertTrue(coronaDataList.size() > 0);
+
+			coronaDataList.forEach(e -> LOG.debug(e.toString()));
+		} catch (CoronaVirusDataException e) {
+			Assert.fail(e.getMessage());
+		}
+	}
+
+}
+
+* Explained
+-------------
+Get an instance of the CoronaVirusRemoteData and get the list of CoranaVirus
+	List<CoronaVirus> coronaDataList = CoronaVirusRemoteData
+			.getInstance(CoronaVirusRemoteData.SOURCE_URL_PREFIX).getCoronaVirusList();
+

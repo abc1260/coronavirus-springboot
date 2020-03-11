@@ -1,0 +1,5 @@
+Process Getting The Local Data CoronaVirus As A Service
+----------------------------------------------------------------------------------------------
+In the CoronaVirusProcessing.java let  get the local data.
+
+
