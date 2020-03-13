@@ -12,6 +12,7 @@ import com.aikiinc.model.CoronaVirus;
 import java.util.List;
 import java.util.Optional;
 import org.apache.commons.csv.CSVRecord;
+import org.junit.Assert;
 
 public class CoronaVirusRemoteData {
 	private Logger log = LoggerFactory.getLogger(CoronaVirusRemoteData.class);
@@ -33,6 +34,7 @@ public class CoronaVirusRemoteData {
 	public static final CoronaVirusRemoteData getInstance(String sourceUrlPrefix) throws CoronaVirusDataException {
 		CoronaVirusRemoteData coronaVirusRemoteData = new CoronaVirusRemoteData(sourceUrlPrefix);
 		coronaVirusRemoteData.process();
+		coronaVirusRemoteData.saveRemoteDataLocally();
 
 		return coronaVirusRemoteData;
 	}
@@ -65,6 +67,15 @@ public class CoronaVirusRemoteData {
 		} catch (Exception e) {
 			log.warn("\tCould not load data from: " + sourceUrl);
 			log.warn("\tException: " + e.getMessage());
+		}
+	}
+
+	private void saveRemoteDataLocally() {
+		try {
+			CoronaVirusLocalData coronaVirusLocalData = CoronaVirusLocalData.getInstance();
+			coronaVirusLocalData.saveRemoteDataLocally(coronaVirusList);
+		} catch (CoronaVirusDataException e) {
+			Assert.fail(e.getMessage());
 		}
 	}
 

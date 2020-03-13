@@ -57,7 +57,6 @@ public class CoronaVirusProcessingTest {
 	@Test
 	public void getCoronaVirusByRegion() {
 		String r = "Mainland China";
-		r = "Hong Kong";
 		List<CoronaVirus> list = coronaVirusProcessing.getCoronaVirusByRegion(r);
 		Assert.assertTrue(list.size() > 0);
 //		if (list != null)

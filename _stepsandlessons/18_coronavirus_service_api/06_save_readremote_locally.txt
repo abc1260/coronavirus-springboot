@@ -1,0 +1,112 @@
+Update The Local coronavirus.data
+----------------------------------------------------------------------------------------------
+Every time we read the remote CoronaVirus data we should Update
+the local src/main/resources/coronavirus.data. Once deployed the
+path that is really update is: target/classes/coronavirus.data.
+
+
+
+Update The CoronaVirusRemoteData class to Save Read Data to the Local File
+----------------------------------------------------------------------------------------------
+public class CoronaVirusRemoteData {
+
+    .
+
+	public static final CoronaVirusRemoteData getInstance(String sourceUrlPrefix) throws CoronaVirusDataException {
+		CoronaVirusRemoteData coronaVirusRemoteData = new CoronaVirusRemoteData(sourceUrlPrefix);
+		coronaVirusRemoteData.process();
+		coronaVirusRemoteData.saveRemoteDataLocally();
+
+		return coronaVirusRemoteData;
+	}
+
+    .
+	private void saveRemoteDataLocally() {
+		try {
+			CoronaVirusLocalData coronaVirusLocalData = CoronaVirusLocalData.getInstance();
+			coronaVirusLocalData.saveRemoteDataLocally(coronaVirusList);
+		} catch (CoronaVirusDataException e) {
+			Assert.fail(e.getMessage());
+		}
+	}
+
+}
+
+
+* Explained
+-----------------
+Add Saving The Read Remote Data Locally
+		coronaVirusRemoteData.saveRemoteDataLocally();
+
+
+The Remote data saves the local file by using the CoronaVirusLocalData class:
+	private void saveRemoteDataLocally() {
+		try {
+			CoronaVirusLocalData coronaVirusLocalData = CoronaVirusLocalData.getInstance();
+			coronaVirusLocalData.saveRemoteDataLocally(coronaVirusList);
+		} catch (CoronaVirusDataException e) {
+			Assert.fail(e.getMessage());
+		}
+	}
+
+
+
+Save The CoronaVirusLocalData 
+----------------------------------------------------------------------------------------------
+Here is the implementation to save a list of CoronaVirus:
+	public static void saveRemoteDataLocally(List<CoronaVirus> coronaVirusList) throws CoronaVirusDataException {
+		try {
+			// 1
+			Path lpath = Paths.get(localUrl.getPath());
+
+			// 2
+			StringBuilder bld = new StringBuilder();
+			bld.append("Province/State,Country/Region,Last Update,Confirmed,Deaths,Recovered,Latitude,Longitude\n");
+			for (CoronaVirus record : coronaVirusList) {
+				bld.append(record.getProvince() == null ? "" : record.getProvince());
+				bld.append(",");
+				bld.append(record.getRegion() == null ? "" : record.getRegion());
+				bld.append(",");
+				bld.append(record.getLastUpdate() == null ? "" : record.getLastUpdate());
+				bld.append(",");
+				bld.append(record.getConfirmed() == null ? "" : record.getConfirmed());
+				bld.append(",");
+				bld.append(record.getDeaths() == null ? "" : record.getDeaths());
+				bld.append(",");
+				bld.append(record.getRecovered() == null ? "" : record.getRecovered());
+				bld.append(",");
+				bld.append(record.getLatitude() == null || record.getLatitude().isEmpty() ? "" : record.getLatitude());
+				bld.append(",");
+				bld.append(record.getLongitude() == null ? "" : record.getLongitude());
+				bld.append("\n");
+			}
+
+			// 3
+			Files.write(lpath, bld.toString().getBytes(), StandardOpenOption.CREATE);
+			log.info("\tSaved data to local path: " + localUrl);
+		} catch (Exception e) {
+			String msg = "Error saving remote data locally: " + e.getMessage();
+			log.warn("\t" + msg);
+			throw new CoronaVirusDataException(e);
+		}
+	}
+
+
+* Explained
+----------------
+Get the path to the Local URL. It  will be mapped to:  target/classes/coronavirus.data
+    Path lpath = Paths.get(localUrl.getPath());
+
+Use StringBuilder To Create the read CoronaVirus class elements:
+        bld.append(record.getProvince() == null ? "" : record.getProvince());
+        bld.append(record.getRegion() == null ? "" : record.getRegion());
+        bld.append(record.getLastUpdate() == null ? "" : record.getLastUpdate());
+        bld.append(record.getConfirmed() == null ? "" : record.getConfirmed());
+        bld.append(record.getDeaths() == null ? "" : record.getDeaths());
+        bld.append(record.getRecovered() == null ? "" : record.getRecovered());
+        bld.append(record.getLatitude() == null || record.getLatitude().isEmpty() ? "" : record.getLatitude());
+        bld.append(record.getLongitude() == null ? "" : record.getLongitude());
+
+Write the entries to a file:
+    Files.write(lpath, bld.toString().getBytes(), StandardOpenOption.CREATE);
+

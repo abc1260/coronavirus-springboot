@@ -5,7 +5,6 @@ import org.junit.Assert;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import com.aikiinc.model.CoronaVirus;
 
 public class CoronaVirusRemoteDataTest {
@@ -14,11 +13,13 @@ public class CoronaVirusRemoteDataTest {
 	@Test
 	public void getCoronaVirusList() {
 		try {
-			List<CoronaVirus> coronaDataList = CoronaVirusRemoteData
-					.getInstance(CoronaVirusRemoteData.SOURCE_URL_PREFIX).getCoronaVirusList();
+			CoronaVirusRemoteData coronaVirusRemoteData = CoronaVirusRemoteData
+					.getInstance(CoronaVirusRemoteData.SOURCE_URL_PREFIX);
+			
+			List<CoronaVirus> coronaDataList = coronaVirusRemoteData.getCoronaVirusList();
 			Assert.assertTrue(coronaDataList.size() > 0);
 
-			coronaDataList.forEach(e -> LOG.debug(e.toString()));
+			// coronaDataList.forEach(e -> LOG.debug(e.toString()));
 		} catch (CoronaVirusDataException e) {
 			Assert.fail(e.getMessage());
 		}

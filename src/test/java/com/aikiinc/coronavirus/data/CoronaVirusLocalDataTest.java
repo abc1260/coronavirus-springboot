@@ -22,5 +22,5 @@ public class CoronaVirusLocalDataTest {
 			Assert.fail(e.getMessage());
 		}
 	}
-
+	
 }
