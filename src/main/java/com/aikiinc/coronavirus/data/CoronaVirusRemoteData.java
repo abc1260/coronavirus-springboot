@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 import com.aikiinc.coronavirus.utility.CoronaVirusUtil;
 import com.aikiinc.model.CoronaVirus;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import org.apache.commons.csv.CSVRecord;
@@ -21,14 +22,14 @@ public class CoronaVirusRemoteData {
 	private URL remoteUrl;
 	private String dateLoaded;
 	private Optional<Iterable<CSVRecord>> records = Optional.empty();
-	private List<CoronaVirus> coronaVirusList;
+	private List<CoronaVirus> coronaVirusList = new ArrayList<CoronaVirus>();
 
 	private CoronaVirusRemoteData() {
 	}
 
 	private CoronaVirusRemoteData(String sourceUrlPrefix) throws CoronaVirusDataException {
 		this.sourceUrlPrefix = sourceUrlPrefix;
-		log.debug(this.sourceUrlPrefix);
+		log.debug("Source url prefix: " + this.sourceUrlPrefix);
 	}
 
 	public static final CoronaVirusRemoteData getInstance(String sourceUrlPrefix) throws CoronaVirusDataException {
@@ -46,6 +47,8 @@ public class CoronaVirusRemoteData {
 			extractData();
 			CoronaVirusUtil.closeBuffer();
 		} catch (CoronaVirusDataException e) {
+			log.warn("Exception: " + e.getMessage());
+			throw new CoronaVirusDataException(e.getMessage());
 		}
 	}
 
@@ -53,7 +56,7 @@ public class CoronaVirusRemoteData {
 		// String sdate =
 		// LocalDate.now().format(DateTimeFormatter.ofPattern("MM-dd-yyyy"));
 		String sdate = LocalDate.now().minusDays(1).format(DateTimeFormatter.ofPattern("MM-dd-yyyy"));
-		log.debug("Load coronavirus data for date: " + sdate);
+		log.debug("Load CoronaVirus data for date: " + sdate);
 
 		String sourceUrl = SOURCE_URL_PREFIX + sdate + ".csv";
 		try {
@@ -65,17 +68,20 @@ public class CoronaVirusRemoteData {
 
 			log.debug("\tLoading data from: " + remoteUrl);
 		} catch (Exception e) {
-			log.warn("\tCould not load data from: " + sourceUrl);
-			log.warn("\tException: " + e.getMessage());
+			String msg = "Could not load data from: " + sourceUrl;
+			log.warn("\t" + msg);
+			throw new CoronaVirusDataException(e.getMessage());
 		}
 	}
 
 	private void saveRemoteDataLocally() {
 		try {
-			CoronaVirusLocalData coronaVirusLocalData = CoronaVirusLocalData.getInstance();
-			coronaVirusLocalData.saveRemoteDataLocally(coronaVirusList);
+			if (coronaVirusList.size() > 0) {
+				CoronaVirusLocalData coronaVirusLocalData = CoronaVirusLocalData.getInstance();
+				coronaVirusLocalData.saveRemoteDataLocally(coronaVirusList);
+			}
 		} catch (CoronaVirusDataException e) {
-			Assert.fail(e.getMessage());
+			log.warn("Exception: " + e.getMessage());
 		}
 	}
 

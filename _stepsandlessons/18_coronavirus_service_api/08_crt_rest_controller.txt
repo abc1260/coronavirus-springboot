@@ -1,34 +1,20 @@
 Create CoronaVirus Rest Controller
 ----------------------------------------------------------------------------------------------
 @RestController
+@RestController
 public class CornaVirusController implements CoronaVirusService {
-	// @Autowired
-	private static CoronaVirusProcessing coronaVirusProcessing;
+	private Logger log = LoggerFactory.getLogger(CornaVirusController.class);
 
-	public CornaVirusController() {
-		System.out.println("aaaaaaaaaa");
-		System.out.println("coronaVirusProcessing: " + coronaVirusProcessing);
+	@Autowired
+	private CoronaVirusProcessing coronaVirusProcessing;
 
-		if (coronaVirusProcessing == null) {
-			coronaVirusProcessing = new CoronaVirusProcessing();
+	public CornaVirusController(CoronaVirusProcessing process) {
+		this.coronaVirusProcessing = process;
+
+		if (coronaVirusProcessing != null) {
+			log.info("Calling darocessing processing");
 			coronaVirusProcessing.process();
 		}
-
-//		if (coronaVirusProcessing != null)
-//			coronaVirusProcessing.process();
-//		else {
-//			coronaVirusProcessing = new CoronaVirusProcessing();
-//			coronaVirusProcessing.process();
-//		}
-		System.out.println("coronaVirusProcessing: " + coronaVirusProcessing);
-
-		System.out.println("aaaaaaaaaa");
-	}
-
-	// @GetMapping(value="/", produces = MediaType.APPLICATION_JSON_VALUE)
-	@GetMapping(value = "/")
-	public HelloMessage index() {
-		return new HelloMessage();
 	}
 
 	@GetMapping(value = "/dateLoaded")
@@ -61,3 +47,49 @@ public class CornaVirusController implements CoronaVirusService {
 
 ** Explained
 ------------------
+Autowire the CoronaVirusProcessing object: 
+	@Autowired
+	private CoronaVirusProcessing coronaVirusProcessing;
+
+
+Add dependency Injection of the CoronaVirusProcessing via constructor.
+If we have CoronaVirusProcessing do processing of getting the data.
+	public CornaVirusController(CoronaVirusProcessing process) {
+		this.coronaVirusProcessing = process;
+
+		if (coronaVirusProcessing != null) {
+			log.info("Calling darocessing processing");
+			coronaVirusProcessing.process();
+		}
+	}
+
+Create the endpoint to get the date loaded for the CoranaVirus
+	@GetMapping(value = "/dateLoaded")
+	public String getDateLoaded() {
+		return coronaVirusProcessing.getDateLoaded();
+	}
+
+Create the endpoint
+	@GetMapping(value = "/coronaVirusRegionsMap")
+	public Map<String, List<CoronaVirus>> getCoronaVirusRegionsMap() {
+		return coronaVirusProcessing.getCoronaVirusRegionsMap();
+	}
+
+Create the endpoint the CoranaVirus regions - states
+	@GetMapping(value = "/regions")
+	public Set<String> getRegionKeys() {
+		return coronaVirusProcessing.getRegionKeys();
+	}
+
+Create the endpoint the list of coronaVirus
+	@GetMapping(value = "/coronaVirusList")
+	public List<CoronaVirus> getCoronaVirusList() {
+		return coronaVirusProcessing.getCoronaVirusList();
+	}
+
+Create the endpoint to get CoronaVirus by region
+	@GetMapping(value = "/coronaVirusByRegion")
+	public List<CoronaVirus> getCoronaVirusByRegion(@RequestParam("region") String region) {
+		return coronaVirusProcessing.getCoronaVirusByRegion(region);
+	}
+

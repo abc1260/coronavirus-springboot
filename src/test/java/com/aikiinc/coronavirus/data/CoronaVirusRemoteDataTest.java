@@ -19,7 +19,7 @@ public class CoronaVirusRemoteDataTest {
 			List<CoronaVirus> coronaDataList = coronaVirusRemoteData.getCoronaVirusList();
 			Assert.assertTrue(coronaDataList.size() > 0);
 
-			// coronaDataList.forEach(e -> LOG.debug(e.toString()));
+			//coronaDataList.forEach(e -> LOG.debug(e.toString()));
 		} catch (CoronaVirusDataException e) {
 			Assert.fail(e.getMessage());
 		}

@@ -1,0 +1,54 @@
+Code Needed Refactoring To Implement Rest Controller
+----------------------------------------------------------------------------------------------
+To implement Rest Controller some of the code had to be refactord:
+
+
+Refactor CoronaVirusProcessing.java
+---------------------------------------------------------------------------------------------
+public class CoronaVirusProcessing implements CoronaVirusService {
+    .
+    .
+
+	public void process() {
+		try {
+			coronaDataList = CoronaVirusRemoteData.getInstance(CoronaVirusRemoteData.SOURCE_URL_PREFIX)
+					.getCoronaVirusList();
+
+			log.debug("Loaded " + coronaDataList.size() + " CoronaVirus remote records.");
+		} catch (CoronaVirusDataException e) {
+			log.warn("Error loading remote data: " + e.getMessage());
+			try {
+				coronaDataList = CoronaVirusLocalData.getInstance().getCoronaVirusList();
+
+				log.debug("Loaded " + coronaDataList.size() + " CoronaVirus local records.");
+			} catch (CoronaVirusDataException e1) {
+				log.warn("Error loading local data: " + e.getMessage());
+			}
+		}
+
+		if (coronaDataList.size() > 0) {
+			getReportedDateLoaded();
+
+			cacheCoronaVirusDataByRegion();
+		}
+	}
+
+    .
+    .
+
+* Explained
+-----------------------
+The change is to allow for exceptions when loading remote data. if
+remote data is not loaded, load the local data.
+
+Getting reported data loaded and caching the data by regions / states.
+
+
+Test Refacttoring
+----------------------------------------------------------------------------------------------
+CornaVirusControllerTest.java
+CoronaVirusLocalDataTest.java
+CoronaVirusRemoteDataTest.java
+CoronaVirusProcessingTest.java
+
+Touch the test code here and there. Look into the files for details.

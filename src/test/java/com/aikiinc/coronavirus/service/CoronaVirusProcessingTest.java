@@ -39,11 +39,10 @@ public class CoronaVirusProcessingTest {
 		Assert.assertTrue(showRegions.size() > 0);
 
 		showRegions.stream().forEach(r -> {
-//			LOG.debug("Region: " + r);
+			// LOG.debug("Region: " + r);
 			List<CoronaVirus> list = coronaVirusProcessing.getCoronaVirusByRegion(r);
 			Assert.assertTrue(list.size() > 0);
-//			if (list != null)
-//				list.stream().forEach(e -> LOG.debug("\t" + e.toString()));
+			// list.stream().forEach(e -> LOG.debug("\t" + e));
 		});
 	}
 
@@ -60,7 +59,7 @@ public class CoronaVirusProcessingTest {
 		List<CoronaVirus> list = coronaVirusProcessing.getCoronaVirusByRegion(r);
 		Assert.assertTrue(list.size() > 0);
 //		if (list != null)
-//			list.stream().forEach(e -> System.out.println(e));
+//			list.stream().forEach(e -> LOG.debug((e.getMessage()));
 	}
 
 }

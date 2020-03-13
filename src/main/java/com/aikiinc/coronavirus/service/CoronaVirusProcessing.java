@@ -28,15 +28,23 @@ public class CoronaVirusProcessing implements CoronaVirusService {
 		try {
 			coronaDataList = CoronaVirusRemoteData.getInstance(CoronaVirusRemoteData.SOURCE_URL_PREFIX)
 					.getCoronaVirusList();
-			
-			if (coronaDataList.size() <= 0)
+
+			log.debug("Loaded " + coronaDataList.size() + " CoronaVirus remote records.");
+		} catch (CoronaVirusDataException e) {
+			log.warn("Error loading remote data: " + e.getMessage());
+			try {
 				coronaDataList = CoronaVirusLocalData.getInstance().getCoronaVirusList();
 
+				log.debug("Loaded " + coronaDataList.size() + " CoronaVirus local records.");
+			} catch (CoronaVirusDataException e1) {
+				log.warn("Error loading local data: " + e.getMessage());
+			}
+		}
+
+		if (coronaDataList.size() > 0) {
 			getReportedDateLoaded();
 
 			cacheCoronaVirusDataByRegion();
-		} catch (CoronaVirusDataException e) {
-			log.warn("Error: " + e.getMessage());
 		}
 	}
 

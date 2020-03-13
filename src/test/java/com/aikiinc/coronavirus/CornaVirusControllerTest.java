@@ -24,27 +24,13 @@ class CornaVirusControllerTest {
 	private MockMvc mvc;
 
 	@Test
-	public void getHelloMessage() throws Exception {
-		MvcResult result = mvc.perform(MockMvcRequestBuilders.get("/").accept(MediaType.APPLICATION_JSON))
-				.andExpect(status().isOk()).andReturn();
-
-		LOG.info("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx");
-		LOG.info(result.getResponse().getContentAsString());
-		LOG.info("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx");
-
-		Assert.assertEquals("{\"message\":\"Greetings from Spring Boot!\"}", result.getResponse().getContentAsString());
-	}
-
-	@Test
 	public void getDateLoaded() throws Exception {
 		MvcResult result = mvc.perform(MockMvcRequestBuilders.get("/dateLoaded").accept(MediaType.APPLICATION_JSON))
 				.andExpect(status().isOk()).andReturn();
 
-		LOG.info("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx");
 		LOG.info(result.getResponse().getContentAsString());
-		LOG.info("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx");
 
-//		/Assert.assertEquals("{\"message\":\"Greetings from Spring Boot!\"}", result.getResponse().getContentAsString());
+		Assert.assertEquals("03-07-2020", result.getResponse().getContentAsString());
 	}
 
 	@Test
@@ -53,11 +39,10 @@ class CornaVirusControllerTest {
 				.perform(MockMvcRequestBuilders.get("/coronaVirusList").accept(MediaType.APPLICATION_JSON))
 				.andExpect(status().isOk()).andReturn();
 
-		LOG.info("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx");
 		LOG.info(result.getResponse().getContentAsString());
-		LOG.info("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx");
 
-//		/Assert.assertEquals("{\"message\":\"Greetings from Spring Boot!\"}", result.getResponse().getContentAsString());
+		// Assert.assertEquals("{\"message\":\"Greetings from Spring Boot!\"}",
+		// result.getResponse().getContentAsString());
 	}
 
 	@Test
@@ -65,25 +50,24 @@ class CornaVirusControllerTest {
 		MvcResult result = mvc.perform(MockMvcRequestBuilders.get("/regionKeys").accept(MediaType.APPLICATION_JSON))
 				.andExpect(status().isOk()).andReturn();
 
-		LOG.info("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx");
 		LOG.info(result.getResponse().getContentAsString());
-		LOG.info("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx");
 
-//		/Assert.assertEquals("{\"message\":\"Greetings from Spring Boot!\"}", result.getResponse().getContentAsString());
+		// Assert.assertEquals("{\"message\":\"Greetings from Spring Boot!\"}",
+		// result.getResponse().getContentAsString());
 	}
 
 	@Test
 	public void getCoronaVirusByRegion() throws Exception {
-		MvcResult result = mvc
-				.perform(
-						MockMvcRequestBuilders.get("/coronaVirusByRegion?region=US").accept(MediaType.APPLICATION_JSON))
+		String region = "Mainland China";
+		region = "US";
+		MvcResult result = mvc.perform(
+				MockMvcRequestBuilders.get("/coronaVirusByRegion?region=" + region).accept(MediaType.APPLICATION_JSON))
 				.andExpect(status().isOk()).andReturn();
 
-		LOG.info("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx");
 		LOG.info(result.getResponse().getContentAsString());
-		LOG.info("xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx");
 
-//		/Assert.assertEquals("{\"message\":\"Greetings from Spring Boot!\"}", result.getResponse().getContentAsString());
+		// Assert.assertEquals("{\"message\":\"Greetings from Spring Boot!\"}",
+		// result.getResponse().getContentAsString());
 	}
 
 }

@@ -11,39 +11,26 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 @RestController
 public class CornaVirusController implements CoronaVirusService {
-	// @Autowired
-	private static CoronaVirusProcessing coronaVirusProcessing;
+	private Logger log = LoggerFactory.getLogger(CornaVirusController.class);
 
-	public CornaVirusController() {
-		System.out.println("aaaaaaaaaa");
-		System.out.println("coronaVirusProcessing: " + coronaVirusProcessing);
+	@Autowired
+	private CoronaVirusProcessing coronaVirusProcessing;
 
-		if (coronaVirusProcessing == null) {
-			coronaVirusProcessing = new CoronaVirusProcessing();
+	public CornaVirusController(CoronaVirusProcessing process) {
+		this.coronaVirusProcessing = process;
+
+		if (coronaVirusProcessing != null) {
+			log.info("Calling darocessing processing");
 			coronaVirusProcessing.process();
 		}
-
-//		if (coronaVirusProcessing != null)
-//			coronaVirusProcessing.process();
-//		else {
-//			coronaVirusProcessing = new CoronaVirusProcessing();
-//			coronaVirusProcessing.process();
-//		}
-		System.out.println("coronaVirusProcessing: " + coronaVirusProcessing);
-
-		System.out.println("aaaaaaaaaa");
-	}
-
-	// @GetMapping(value="/", produces = MediaType.APPLICATION_JSON_VALUE)
-	@GetMapping(value = "/")
-	public HelloMessage index() {
-		return new HelloMessage();
 	}
 
 	@GetMapping(value = "/dateLoaded")
@@ -56,7 +43,7 @@ public class CornaVirusController implements CoronaVirusService {
 		return coronaVirusProcessing.getCoronaVirusRegionsMap();
 	}
 
-	@GetMapping(value = "/regionKeys")
+	@GetMapping(value = "/regions")
 	public Set<String> getRegionKeys() {
 		return coronaVirusProcessing.getRegionKeys();
 	}
