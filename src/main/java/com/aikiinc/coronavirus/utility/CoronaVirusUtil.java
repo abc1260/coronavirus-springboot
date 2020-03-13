@@ -14,6 +14,9 @@ import com.aikiinc.coronavirus.data.CoronaVirusDataException;
 import com.aikiinc.model.CoronaVirus;
 
 import java.net.URL;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import java.util.Set;
@@ -115,7 +118,7 @@ public class CoronaVirusUtil {
 					LOG.warn(e.getMessage());
 				}
 
-				//LOG.debug(j++ + ": " + data.toString());
+				// LOG.debug(j++ + ": " + data.toString());
 
 				if (data.getRegion() != null && data.getRegion().length() > 1)
 					coronaVirusDataList.add(data);
@@ -131,6 +134,21 @@ public class CoronaVirusUtil {
 
 	public static Set<String> getRegionKeys() {
 		return regionKeys;
+	}
+
+	public static Optional<String> getReportedDate(String reportedDate) {
+		Optional<String> optdate = Optional.empty();
+
+		try {
+			DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'hh:mm:ss");
+			LocalDate ldate = LocalDate.parse(reportedDate, formatter);
+			String sdate = ldate.format(DateTimeFormatter.ofPattern("MM-dd-yyyy"));
+
+			optdate = Optional.ofNullable(sdate);
+		} catch (Exception e) {
+		}
+
+		return optdate;
 	}
 
 }

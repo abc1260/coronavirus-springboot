@@ -1,0 +1,57 @@
+What Do We Want From the CoronaService Data Access?
+-------------------------------------------------------------------------------
+We are reading this data from Johns Hopkins University Center for Systems Science and Engineering (JHU CSSE). These are the colum data:
+    Province/State
+    Country/Region
+    Last Update
+    Confirmed
+    Deaths
+    Recovered
+    Latitude
+    Longitude
+
+I should have ask that question first:
+"What Do We Want From the CoronaService Data Access?"
+
+But this started by watching the news, and the news castor said that JHU captures
+the CoronaVirus data. Ummm I said. Data and Jhipster magically popped up.
+
+What if I accessed this JHU data using Jhipster. 
+What's my motivation, a TV new to create access to CoronaVirus data.
+
+
+I Ask Again "What Do We Want From the CoronaService Data Access?"
+-------------------------------------------------------------------------------
+Here is the wish list:
+Get the date when the data was loaded.
+Get a list of CoronaVirus data per region or country.
+Get a list of all the CoronaViruses for all and per region or country.
+
+What method access should we use:
+    public String getDateLoaded();
+    public List<CoronaVirus> getCoronaVirusList();
+    public List<CoronaVirus> getCoronaVirusByRegion(String region);
+    public Map<String, List<CoronaVirus>> getCoronaVirusRegionsMap();
+    public Set<String> getRegionKeys();     
+
+
+* Explained
+-----------------
+This will implement: Get the date the data was loaded:
+    public String getDateLoaded();
+
+This will implement: Get a list of CoronaVirus data per region/country.
+    public List<CoronaVirus> getCoronaVirusByRegion(String region);
+
+This will implement: Get a list of all the CoronaViruses.
+    public List<CoronaVirus> getCoronaVirusList();
+
+Cache the list of CoronaVirus per region/country:
+    public Map<String, List<CoronaVirus>> getCoronaVirusRegionsMap();
+
+Since we are getting the Map of region enties, get the keys:
+    public Set<String> getRegionKeys();
+
+
+
+

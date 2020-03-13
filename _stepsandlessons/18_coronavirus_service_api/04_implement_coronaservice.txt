@@ -1,0 +1,196 @@
+Create The Service API As An Interface
+----------------------------------------------------------------------------------------------
+package com.aikiinc.coronavirus.service;
+
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import com.aikiinc.model.CoronaVirus;
+
+public interface CoronaVirusService {
+	public String getDateLoaded();
+
+	public Map<String, List<CoronaVirus>> getCoronaVirusRegionsMap();
+
+	public Set<String> getRegionKeys();
+	
+	public List<CoronaVirus> getCoronaVirusList();
+	
+	public List<CoronaVirus> getCoronaVirusByRegion(String region);
+}
+
+
+
+Implement Interface Via The Class: CoronaVirusProcessing
+----------------------------------------------------------------------------------------------
+public class CoronaVirusProcessing implements CoronaVirusService {
+	private Logger log = LoggerFactory.getLogger(CoronaVirusProcessing.class);
+	private List<CoronaVirus> coronaDataList = new ArrayList<CoronaVirus>();
+	private String dateLoaded = "99/99/9999";
+	private Map<String, List<CoronaVirus>> coronaVirusDataRegionsMap = new TreeMap<String, List<CoronaVirus>>();
+
+	public void process() {
+		try {
+			coronaDataList = CoronaVirusRemoteData.getInstance(CoronaVirusRemoteData.SOURCE_URL_PREFIX)
+					.getCoronaVirusList();
+			
+			if (coronaDataList.size() <= 0)
+				coronaDataList = CoronaVirusLocalData.getInstance().getCoronaVirusList();
+
+			getReportedDateFromList();
+
+			cacheCoronaVirusDataByRegion();
+		} catch (CoronaVirusDataException e) {
+			log.warn("Error: " + e.getMessage());
+		}
+	}
+
+	void getReportedDateFromList() {
+		if (coronaDataList.size() > 0) {
+			CoronaVirus coronaVirus = coronaDataList.get(0);
+			Optional<String> sdate = CoronaVirusUtil.getReportedDate(coronaVirus.getLastUpdate());
+			if (sdate.isPresent())
+				dateLoaded = sdate.get();
+		}
+	}
+
+	void cacheCoronaVirusDataByRegion() {
+		for (CoronaVirus rec : coronaDataList) {
+			String region = rec.getRegion().trim();
+			if (region != null && !region.isEmpty()) {
+				List<CoronaVirus> tlist = coronaVirusDataRegionsMap.get(region);
+				if (tlist == null) {
+					// Create new list, add entry
+					tlist = new ArrayList<CoronaVirus>();
+					tlist.add(rec);
+				} else {
+					// Update list, add entry
+					tlist.add(rec);
+				}
+
+				coronaVirusDataRegionsMap.put(region, tlist);
+			}
+		}
+	}
+
+	@Override
+	public String getDateLoaded() {
+		return dateLoaded;
+	}
+
+	@Override
+	public Map<String, List<CoronaVirus>> getCoronaVirusRegionsMap() {
+		return coronaVirusDataRegionsMap;
+	}
+
+	@Override
+	public Set<String> getRegionKeys() {
+		return coronaVirusDataRegionsMap.keySet();
+	}
+
+	@Override
+	public List<CoronaVirus> getCoronaVirusList() {
+		return coronaDataList;
+	}
+
+	@Override
+	public List<CoronaVirus> getCoronaVirusByRegion(String region) {
+		List<CoronaVirus> coronaDataList = new ArrayList<CoronaVirus>();
+
+		if (region != null)
+			coronaDataList = coronaVirusDataRegionsMap.get(region);
+
+		return coronaDataList;
+	}
+
+}
+
+
+** Explained
+-----------------------
+If we do not read the corona values, set dateLoaded to 99/99/9999
+	private String dateLoaded = "99/99/9999";
+
+Process loading and getting the corona virus:
+1. From the remote service first
+2. If its not found, load it from the local files
+3. Get the dateLoaded
+4. Cache each read CoronaVirus entry in a map per region or state
+	public void process() {
+		try {
+			coronaDataList = CoronaVirusRemoteData.getInstance(CoronaVirusRemoteData.SOURCE_URL_PREFIX)
+					.getCoronaVirusList();
+			
+			if (coronaDataList.size() <= 0)
+				coronaDataList = CoronaVirusLocalData.getInstance().getCoronaVirusList();
+
+			getReportedDateLoaded();
+
+			cacheCoronaVirusDataByRegion();
+		} catch (CoronaVirusDataException e) {
+			log.warn("Error: " + e.getMessage());
+		}
+	}
+
+
+Get the dateLoaded from first entry in the list of record read:
+	void getReportedDateLoaded() {
+		if (coronaDataList.size() > 0) {
+			CoronaVirus coronaVirus = coronaDataList.get(0);
+			Optional<String> sdate = CoronaVirusUtil.getReportedDate(coronaVirus.getLastUpdate());
+			if (sdate.isPresent())
+				dateLoaded = sdate.get();
+		}
+	}
+
+
+Cache each read CoronaVirus entry in a map per region or state
+	void cacheCoronaVirusDataByRegion() {
+		for (CoronaVirus rec : coronaDataList) {
+			String region = rec.getRegion().trim();
+			if (region != null && !region.isEmpty()) {
+				List<CoronaVirus> tlist = coronaVirusDataRegionsMap.get(region);
+				if (tlist == null) {
+					// Create new list, add entry
+					tlist = new ArrayList<CoronaVirus>();
+					tlist.add(rec);
+				} else {
+					// Update list, add entry
+					tlist.add(rec);
+				}
+
+				coronaVirusDataRegionsMap.put(region, tlist);
+			}
+		}
+	}
+
+Define all the accessors for the created CoronaVirus Data processing:
+	public String getDateLoaded() {
+		return dateLoaded;
+	}
+
+	public Map<String, List<CoronaVirus>> getCoronaVirusRegionsMap() {
+		return coronaVirusDataRegionsMap;
+	}
+
+	public Set<String> getRegionKeys() {
+		return coronaVirusDataRegionsMap.keySet();
+	}
+
+	public List<CoronaVirus> getCoronaVirusList() {
+		return coronaDataList;
+	}
+
+	public List<CoronaVirus> getCoronaVirusByRegion(String region) {
+		List<CoronaVirus> coronaDataList = new ArrayList<CoronaVirus>();
+
+		if (region != null)
+			coronaDataList = coronaVirusDataRegionsMap.get(region);
+
+		return coronaDataList;
+	}
+
+
+We have define the backend service for accesingg the CoronaVirus from a 
+local or remote file.

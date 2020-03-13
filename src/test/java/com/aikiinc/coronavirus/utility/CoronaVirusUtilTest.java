@@ -51,7 +51,7 @@ public class CoronaVirusUtilTest {
 				List<CoronaVirus> coronaDataList = CoronaVirusUtil.extractData(records);
 				Assert.assertTrue(coronaDataList.size() > 0);
 
-				//coronaDataList.forEach(e -> System.out.println(e));
+				// coronaDataList.forEach(e -> System.out.println(e));
 			} else
 				Assert.fail("No CSVRecord was read");
 		} catch (CoronaVirusDataException e) {
@@ -59,6 +59,15 @@ public class CoronaVirusUtilTest {
 		} finally {
 			CoronaVirusUtil.closeBuffer();
 		}
+	}
+
+	@Test
+	public void getReportedDate() {
+		Optional<String> sdate = CoronaVirusUtil.getReportedDate("2020-03-07T11:13:04");
+		if (sdate.isPresent()) {
+			//LOG.debug("sdate: " + sdate.get());
+		} else
+			Assert.fail("Date is invalid");
 	}
 
 }
