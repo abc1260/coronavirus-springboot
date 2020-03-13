@@ -1,20 +1,5 @@
-package com.aikiinc.coronavirus;
-
-import org.springframework.web.bind.annotation.RestController;
-
-import com.aikiinc.coronavirus.service.CoronaVirusProcessing;
-import com.aikiinc.coronavirus.service.CoronaVirusService;
-import com.aikiinc.model.CoronaVirus;
-import com.aikiinc.model.HelloMessage;
-
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
-
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-
+Create CoronaVirus Rest Controller
+----------------------------------------------------------------------------------------------
 @RestController
 public class CornaVirusController implements CoronaVirusService {
 	// @Autowired
@@ -72,3 +57,7 @@ public class CornaVirusController implements CoronaVirusService {
 	}
 
 }
+
+
+** Explained
+------------------

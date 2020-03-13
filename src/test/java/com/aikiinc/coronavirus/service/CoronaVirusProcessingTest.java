@@ -20,17 +20,17 @@ public class CoronaVirusProcessingTest {
 	}
 
 	@Test
-	public void getCoronaVirusList() {
-		Assert.assertTrue(coronaVirusProcessing.getCoronaVirusList().size() > 0);
-		// coronaVirusProcessing.getCoronaVirusList().forEach(e ->
-		// LOG.debug(e.toString()));
-	}
-
-	@Test
 	public void getDateLoaded() {
 		String reporteddate = coronaVirusProcessing.getDateLoaded();
 		Assert.assertNotNull(reporteddate);
 		// LOG.debug(reporteddate);
+	}
+
+	@Test
+	public void getCoronaVirusList() {
+		Assert.assertTrue(coronaVirusProcessing.getCoronaVirusList().size() > 0);
+		// coronaVirusProcessing.getCoronaVirusList().forEach(e ->
+		// LOG.debug(e.toString()));
 	}
 
 	@Test

@@ -9,6 +9,7 @@ import java.util.TreeMap;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.stereotype.Service;
 
 import com.aikiinc.coronavirus.data.CoronaVirusDataException;
 import com.aikiinc.coronavirus.data.CoronaVirusLocalData;
@@ -16,6 +17,7 @@ import com.aikiinc.coronavirus.data.CoronaVirusRemoteData;
 import com.aikiinc.coronavirus.utility.CoronaVirusUtil;
 import com.aikiinc.model.CoronaVirus;
 
+@Service
 public class CoronaVirusProcessing implements CoronaVirusService {
 	private Logger log = LoggerFactory.getLogger(CoronaVirusProcessing.class);
 	private List<CoronaVirus> coronaDataList = new ArrayList<CoronaVirus>();
