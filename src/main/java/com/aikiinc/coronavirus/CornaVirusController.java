@@ -1,6 +1,7 @@
 package com.aikiinc.coronavirus;
 
 import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.servlet.ModelAndView;
 
 import com.aikiinc.coronavirus.service.CoronaVirusProcessing;
 import com.aikiinc.coronavirus.service.CoronaVirusService;
@@ -16,6 +17,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 
 @RestController
 public class CornaVirusController implements CoronaVirusService {
@@ -33,8 +35,17 @@ public class CornaVirusController implements CoronaVirusService {
 		}
 	}
 
+	@GetMapping(value = "/")
+	public ModelAndView index() {
+		ModelAndView mv = new ModelAndView();
+		mv.addObject("message","Hello message");
+		mv.setViewName("index.html");
+		
+		return mv;
+	}
+
 	@GetMapping(value = "/dateLoaded")
-	public String getDateLoaded() {
+	public  @ResponseBody String getDateLoaded() {
 		return coronaVirusProcessing.getDateLoaded();
 	}
 
