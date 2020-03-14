@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import org.apache.commons.csv.CSVRecord;
-import org.junit.Assert;
+
 
 public class CoronaVirusRemoteData {
 	private Logger log = LoggerFactory.getLogger(CoronaVirusRemoteData.class);
